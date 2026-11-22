@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Car Check</title>
 <meta name="theme-color" content="#14202b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Car Check">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -56,7 +63,8 @@ button{cursor:pointer}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--band);z-index:20}
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:linear-gradient(135deg,var(--band),var(--band-2));color:var(--band-fg);
   padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));display:grid;gap:10px;box-shadow:0 6px 20px rgba(9,14,24,.18)}
-.hrow{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto;width:100%}
+header.top{grid-template-columns:minmax(0,1fr)}
+.hrow{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto;width:100%;min-width:0}
 .brand{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
 .mark{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(212,176,106,.45);flex:none}
 .brand h1{font-size:1.05rem;letter-spacing:.01em}
@@ -198,9 +206,45 @@ pre.log{margin:0;max-height:220px;overflow:auto;background:var(--surface-2);bord
 .saved{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:9px 18px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:30;box-shadow:var(--shadow)}
 
+/* buttons with icons, section quick bar */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn svg{width:18px;height:18px;flex:none}
+.btn.sm{padding:8px 12px;font-size:.82rem;border-radius:10px}
+.btn.sm svg{width:15px;height:15px}
+.btn.ai{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,var(--line-2))}
+.secbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 16px 12px}
+.secbar .btn{padding:8px 12px;font-size:.82rem;color:var(--good);border-color:color-mix(in srgb,var(--good) 45%,var(--line-2))}
+.secbar .btn svg{width:15px;height:15px}
+.item .itools,.item .thumbs,.item .aians,.item>.callout{grid-column:1/-1}
+.itools{display:flex;gap:8px;flex-wrap:wrap}
+
+/* photos */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface-2);border-radius:999px;padding:7px 13px;font-size:.84rem;font-weight:600}
+.chip b{color:var(--accent);font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.phgroup{display:grid;gap:8px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.ph{position:relative;border:0;padding:0;border-radius:12px;overflow:hidden;aspect-ratio:1;background:var(--surface-2)}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph span{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 4px;font-size:.66rem;font-weight:700;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.65));text-align:left}
+.viewer{position:fixed;inset:0;z-index:40;background:rgba(5,8,15,.94);display:grid;grid-template-rows:auto 1fr;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.viewer .vbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;color:#eef2fa;font-weight:600;font-size:.9rem}
+.viewer img{width:100%;height:100%;object-fit:contain;min-height:0}
+
+/* Ask Claude */
+.aicard{border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.askrow{display:flex;gap:8px}
+.askrow input{flex:1;min-width:0}
+.aiq{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.aiq .q{font-weight:600}
+.aians{background:var(--accent-soft);border-radius:12px;padding:12px 14px;display:grid;gap:6px;font-size:.92rem;line-height:1.5}
+.aians p,.aians ul{margin:0}
+.aians ul{padding-left:18px;display:grid;gap:4px}
+
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 @media print{
-  header.top,nav.tabs,.no-print,body::before,.toast{display:none!important}
+  header.top,nav.tabs,.no-print,body::before,.toast,.viewer,.secbar,.itools{display:none!important}
   body{background:#fff;color:#000}
   main{padding:0;max-width:none}
   .card,details.sec{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
@@ -225,7 +269,9 @@ pre.log{margin:0;max-height:220px;overflow:auto;background:var(--surface-2);bord
 <main id="main"></main>
 <nav class="tabs" id="tabs"></nav>
 <div class="toast" id="toast" hidden></div>
-<input type="file" id="importFile" accept="application/json" hidden>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+<input type="file" id="photoFile" accept="image/*" multiple hidden>
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" hidden></div>
 
 <script>
 'use strict';
@@ -268,6 +314,19 @@ en:{car:'Car',scan:'Scan',check:'Checklist',report:'Report',saved:'Saved',
  emptySaved:'No saved inspections yet. Finish one and tap Save on the Report tab.',storageNote:'Inspections are stored on this phone only. Export a backup now and then.',
  imported:'Imported',importFail:'That file is not a Car Check backup.',current:'Open now',km_u:'km',min_u:'min',feeLine:'Papers, ads and detailing',profitLine:'Our profit',
  btFail:'Could not connect. Make sure the scanner is plugged in, the ignition is on, and Bluetooth is on.',lost:'Scanner disconnected.',gpsFail:'GPS is off or not allowed.',
+ allOk:'Mark the rest OK',allOkHint:'Only fills the points you have not rated yet.',
+ photosH:'Photos and documents',photosHint:'Pick a group, then add photos. They stay on this phone with this inspection.',addPhotos:'Add photos',noPhotos:'No photos yet.',
+ pc_docs:'Documents',pc_outside:'Outside',pc_inside:'Inside',pc_engine:'Engine',pc_under:'Underside',pc_damage:'Problems',
+ photo:'Photo',savingPh:'Saving photos…',phSaved:'Photos saved',phFail:'Could not save photos on this phone.',delPhoto:'Delete photo',close:'Close',
+ askItem:'Ask Claude',aiH:'Ask Claude',aiHint:'Claude reads this inspection and your photos (not documents, seller name or phone) and answers in seconds.',
+ aiVerdict:'Should we buy? Yes, no or offer',aiAskPh:'Ask anything, e.g. the AC clicks when it turns on — what is it?',aiSend:'Ask',aiPhotos:'Send photos too (not documents)',
+ aiThinking:'Claude is thinking…',aiNoKey:'No Claude key on this phone yet. The buttons copy this inspection so you can paste it into the Claude app. Add a key in the Saved tab to get answers right here, with photos.',
+ aiCopied:'Copied. Paste it into Claude.',aiErrKey:'Claude did not accept the API key. Check it in the Saved tab.',aiErrBusy:'Claude is busy. Try again in a minute.',aiErrNet:'No internet connection.',
+ aiErr:'Claude could not answer:',aiRefused:'Claude declined this question.',aiQVerdict:'Should we buy this car?',aiQItem:'What does this problem mean, and what will it cost?',aiDel:'Clear answers',
+ keyH:'Claude AI help',keyLbl:'Claude API key',keySave:'Save key',keyDel:'Remove key',keySaved:'Key saved on this phone',keyHas:'A key is saved on this phone. Ask Claude works on the Report and Checklist tabs.',
+ keySteps:'1. Open console.anthropic.com and sign in. 2. In Billing, add a small credit and set a monthly limit. 3. In API keys, create a key and paste it here. Each answer costs roughly 5–15 taka.',
+ iosBt:'iPhone browsers cannot use Bluetooth, so the scanner does not work in Safari or Chrome on iPhone. Everything else works. For the scanner on iPhone, open this link in the Bluefy browser app and use a BLE (Bluetooth 4.0) scanner.',
+ bleNote:'Works with BLE (Bluetooth 4.0 / 5.0) scanners. Older classic-Bluetooth adapters do not show up in the list.',
  sec_papers:'Papers',sec_frame:'Frame and accident check',sec_panels:'Body panels',sec_glass:'Glass and lights',sec_flood:'Flood signs',sec_engine:'Engine bay',sec_under:'Under the car',
  sec_tyres:'Wheels, tyres and tools',sec_interior:'Interior, switches and doors',sec_gas:'CNG / LPG kit',sec_drive:'Test drive',sec_mechanic:'Mechanic',sec_scan:'Scanner',sec_hybrid:'Hybrid battery'},
 bn:{car:'গাড়ি',scan:'স্ক্যান',check:'চেকলিস্ট',report:'রিপোর্ট',saved:'সংরক্ষিত',
@@ -304,6 +363,19 @@ bn:{car:'গাড়ি',scan:'স্ক্যান',check:'চেকলিস
  emptySaved:'এখনো কোনো পরিদর্শন সেভ করা নেই। একটি শেষ করে রিপোর্ট ট্যাবে সেভ চাপুন।',storageNote:'পরিদর্শনগুলো শুধু এই ফোনে থাকে। মাঝে মাঝে ব্যাকআপ এক্সপোর্ট করুন।',
  imported:'ইমপোর্ট হয়েছে',importFail:'এটি Car Check ব্যাকআপ ফাইল নয়।',current:'এখন খোলা',km_u:'কিমি',min_u:'মিনিট',feeLine:'কাগজ, বিজ্ঞাপন ও ডিটেইলিং',profitLine:'আমাদের লাভ',
  btFail:'কানেক্ট হয়নি। স্ক্যানার লাগানো আছে, চাবি অন আছে আর ব্লুটুথ চালু আছে কিনা দেখুন।',lost:'স্ক্যানার ডিসকানেক্ট হয়ে গেছে।',gpsFail:'জিপিএস বন্ধ বা অনুমতি নেই।',
+ allOk:'বাকিগুলো ঠিক',allOkHint:'শুধু যেগুলো এখনো চিহ্নিত করা হয়নি সেগুলো পূরণ হবে।',
+ photosH:'ছবি ও কাগজপত্র',photosHint:'একটি গ্রুপ বেছে নিয়ে ছবি যোগ করুন। ছবিগুলো এই পরিদর্শনের সাথে এই ফোনেই থাকবে।',addPhotos:'ছবি যোগ করুন',noPhotos:'এখনো কোনো ছবি নেই।',
+ pc_docs:'কাগজপত্র',pc_outside:'বাইরে',pc_inside:'ভেতরে',pc_engine:'ইঞ্জিন',pc_under:'নিচে',pc_damage:'সমস্যা',
+ photo:'ছবি',savingPh:'ছবি সেভ হচ্ছে…',phSaved:'ছবি সেভ হয়েছে',phFail:'এই ফোনে ছবি সেভ করা যায়নি।',delPhoto:'ছবি মুছুন',close:'বন্ধ',
+ askItem:'Claude-কে জিজ্ঞাসা',aiH:'Claude-কে জিজ্ঞাসা করুন',aiHint:'Claude এই পরিদর্শন ও আপনার ছবি পড়ে (কাগজপত্র, বিক্রেতার নাম বা ফোন নয়) কয়েক সেকেন্ডে উত্তর দেয়।',
+ aiVerdict:'কিনব কি? হ্যাঁ, না নাকি অফার',aiAskPh:'যেকোনো প্রশ্ন লিখুন, যেমন: এসি চালু হলে টিকটিক শব্দ করে — এটা কী?',aiSend:'জিজ্ঞাসা',aiPhotos:'ছবিও পাঠান (কাগজপত্র নয়)',
+ aiThinking:'Claude ভাবছে…',aiNoKey:'এই ফোনে এখনো Claude কী নেই। বাটনগুলো পরিদর্শনটি কপি করবে, আপনি Claude অ্যাপে পেস্ট করবেন। সংরক্ষিত ট্যাবে কী যোগ করলে এখানেই ছবিসহ উত্তর পাবেন।',
+ aiCopied:'কপি হয়েছে। Claude-এ পেস্ট করুন।',aiErrKey:'Claude API কী গ্রহণ করেনি। সংরক্ষিত ট্যাবে কী যাচাই করুন।',aiErrBusy:'Claude ব্যস্ত। এক মিনিট পরে আবার চেষ্টা করুন।',aiErrNet:'ইন্টারনেট সংযোগ নেই।',
+ aiErr:'Claude উত্তর দিতে পারেনি:',aiRefused:'Claude এই প্রশ্নের উত্তর দেয়নি।',aiQVerdict:'এই গাড়ি কি কিনব?',aiQItem:'এই সমস্যার মানে কী, আর খরচ কত হবে?',aiDel:'উত্তরগুলো মুছুন',
+ keyH:'Claude AI সহায়তা',keyLbl:'Claude API কী',keySave:'কী সেভ করুন',keyDel:'কী মুছুন',keySaved:'কী এই ফোনে সেভ হয়েছে',keyHas:'এই ফোনে একটি কী সেভ আছে। রিপোর্ট ও চেকলিস্ট ট্যাবে Claude-কে জিজ্ঞাসা করা যাবে।',
+ keySteps:'১. console.anthropic.com খুলে সাইন ইন করুন। ২. Billing-এ অল্প ক্রেডিট যোগ করে মাসিক সীমা ঠিক করুন। ৩. API keys-এ একটি কী তৈরি করে এখানে পেস্ট করুন। প্রতিটি উত্তরে মোটামুটি ৫–১৫ টাকা খরচ।',
+ iosBt:'আইফোনের ব্রাউজার ব্লুটুথ ব্যবহার করতে পারে না, তাই আইফোনের Safari বা Chrome-এ স্ক্যানার চলবে না। বাকি সব কাজ করবে। আইফোনে স্ক্যানারের জন্য লিংকটি Bluefy ব্রাউজার অ্যাপে খুলুন এবং BLE (ব্লুটুথ ৪.০) স্ক্যানার ব্যবহার করুন।',
+ bleNote:'BLE (ব্লুটুথ ৪.০ / ৫.০) স্ক্যানারের সাথে কাজ করে। পুরনো ক্লাসিক ব্লুটুথ অ্যাডাপ্টার তালিকায় দেখাবে না।',
  sec_papers:'কাগজপত্র',sec_frame:'ফ্রেম ও দুর্ঘটনা যাচাই',sec_panels:'বডি প্যানেল',sec_glass:'কাচ ও লাইট',sec_flood:'বন্যার চিহ্ন',sec_engine:'ইঞ্জিন',sec_under:'গাড়ির নিচে',
  sec_tyres:'চাকা, টায়ার ও টুলস',sec_interior:'ভেতর, সুইচ ও দরজা',sec_gas:'সিএনজি / এলপিজি কিট',sec_drive:'টেস্ট ড্রাইভ',sec_mechanic:'মেকানিক',sec_scan:'স্ক্যানার',sec_hybrid:'হাইব্রিড ব্যাটারি'}
 };
@@ -359,127 +431,102 @@ const SI={ /* section and fuel icons, 24px stroke */
  diesel:'<path d="M12 3s-5 6-5 10a5 5 0 0010 0c0-4-5-10-5-10z"/><path d="M10.5 11v5h1.3a2.5 2.5 0 000-5z"/>',
  car:'<path d="M4 15l1.8-5.2c.3-.9 1.2-1.5 2.1-1.5h8.2c.9 0 1.8.6 2.1 1.5L20 15v3.5h-2.4v-1.6H6.4v1.6H4z"/>',
  seller:'<circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6 8-6s7.2 2 8 6"/>',
- price:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>'};
+ price:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',
+ camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ image:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/>',
+ spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+ key:'<circle cx="8" cy="14" r="4"/><path d="M11 11l9-9M17 5l2 2M15 7l2 2"/>'};
 const svg=(k,s)=>`<svg viewBox="0 0 24 24" ${s?`width="${s}" height="${s}"`:''} fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${SI[k]||''}</svg>`;
 const RICON={ok:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',minor:'<path d="M12 6v8M12 18v.5"/>',major:'<path d="M6 6l12 12M18 6L6 18"/>',na:'<path d="M6 12h12"/>'};
 const rsvg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">${RICON[k]}</svg>`;
 const isHyb=()=>S.car.fuel==='hybrid',isGas=()=>S.car.fuel==='cng'||S.car.fuel==='lpg';
 
-/* ---------- checklist: [id, mustPass, en, bn, condition] ---------- */
+/* ---------- checklist: [id, mustPass, en, bn, condition] ----------
+   Merged from ~110 points to ~47: related checks are one tap, the note box says which part failed. */
 const SECTIONS=[
  {k:'papers',w:14,items:[
-  ['p1',1,'Registration owner name matches the seller\'s NID','রেজিস্ট্রেশনে মালিকের নাম বিক্রেতার এনআইডির সাথে মিলে'],
-  ['p2',1,'Checked online with BRTA, details match','বিআরটিএ অনলাইনে যাচাই করা হয়েছে, তথ্য মিলেছে'],
-  ['p3',1,'Chassis number on the body matches the papers, no tampering','বডির চেসিস নম্বর কাগজের সাথে মিলে, কোনো ঘষামাজা নেই'],
-  ['p4',1,'Engine number matches the papers','ইঞ্জিন নম্বর কাগজের সাথে মিলে'],
+  ['p1',1,'Seller is the real owner: name on the registration matches the seller\'s NID','বিক্রেতাই আসল মালিক: রেজিস্ট্রেশনের নাম বিক্রেতার এনআইডির সাথে মিলে'],
+  ['p2',1,'BRTA online check matches, no unpaid fines or cases','বিআরটিএ অনলাইন যাচাই মিলেছে, বকেয়া জরিমানা বা মামলা নেই'],
+  ['p3',1,'Chassis and engine numbers match the papers, no tampering','চেসিস ও ইঞ্জিন নম্বর কাগজের সাথে মিলে, ঘষামাজা নেই'],
   ['p5',1,'No bank loan, or the bank NOC is available','ব্যাংক লোন নেই, অথবা ব্যাংকের এনওসি আছে'],
-  ['p6',0,'Tax token valid','ট্যাক্স টোকেনের মেয়াদ আছে'],
-  ['p7',0,'Fitness certificate valid','ফিটনেস সার্টিফিকেটের মেয়াদ আছে'],
-  ['p8',0,'Insurance valid','ইন্স্যুরেন্সের মেয়াদ আছে'],
-  ['p9',0,'No unpaid fines or cases','কোনো বকেয়া জরিমানা বা মামলা নেই'],
-  ['p10',0,'Seller is the real owner, not a broker','বিক্রেতা আসল মালিক, দালাল নয়']]},
+  ['p6',0,'Tax token, fitness and insurance all valid','ট্যাক্স টোকেন, ফিটনেস ও ইন্স্যুরেন্স সবগুলোর মেয়াদ আছে']]},
  {k:'frame',w:14,items:[
-  ['fr1',1,'Chassis rails straight, no welding or cuts','চেসিস রেল সোজা, ওয়েল্ডিং বা কাটা নেই'],
-  ['fr2',1,'Engine bay frame straight: radiator support, inner fenders and aprons not repaired','ইঞ্জিন বে ফ্রেম সোজা: রেডিয়েটর সাপোর্ট, ইনার ফেন্ডার ও এপ্রনে মেরামত নেই'],
-  ['fr3',1,'Factory chassis sealer beads original, no new sealer or grinding marks','কারখানার চেসিস সিলার বিড অরিজিনাল, নতুন সিলার বা গ্রাইন্ডিং দাগ নেই'],
-  ['fr4',0,'Pillars, roof edges and door frames straight','পিলার, ছাদের কিনারা ও দরজার ফ্রেম সোজা'],
-  ['fr5',0,'Boot floor and spare wheel well undamaged','বুটের ফ্লোর ও স্পেয়ার চাকার জায়গা অক্ষত'],
-  ['fr6',0,'Bolts on fenders, doors, bonnet and boot never opened','ফেন্ডার, দরজা, বনেট ও বুটের বোল্টে খোলার দাগ নেই'],
-  ['fr7',0,'Panel gaps even all around','চারপাশে প্যানেলের ফাঁক সমান'],
-  ['fr8',0,'No rust on body, sills and door edges','বডি, সিল ও দরজার কিনারায় মরিচা নেই']]},
+  ['fr1',1,'Chassis rails and engine bay frame straight: no welding, cuts or repairs on rails, radiator support or aprons','চেসিস রেল ও ইঞ্জিন বে ফ্রেম সোজা: রেল, রেডিয়েটর সাপোর্ট বা এপ্রনে ওয়েল্ডিং, কাটা বা মেরামত নেই'],
+  ['fr3',1,'Factory sealer beads original, no new sealer or grinding marks','কারখানার সিলার বিড অরিজিনাল, নতুন সিলার বা গ্রাইন্ডিং দাগ নেই'],
+  ['fr4',0,'Pillars, roof edges, door frames, boot floor and spare well straight and rust-free','পিলার, ছাদের কিনারা, দরজার ফ্রেম, বুট ফ্লোর ও স্পেয়ার চাকার জায়গা সোজা ও মরিচামুক্ত'],
+  ['fr6',0,'Panel bolts never opened, panel gaps even all around','প্যানেলের বোল্টে খোলার দাগ নেই, চারপাশে ফাঁক সমান']]},
  {k:'panels',w:6,two:true,items:[
-  ['bp1',0,'Front bumper','সামনের বাম্পার'],['bp2',0,'Bonnet','বনেট'],['bp3',0,'Roof','ছাদ'],['bp4',0,'Boot lid','বুটের ঢাকনা'],['bp5',0,'Rear bumper','পেছনের বাম্পার'],
-  ['bp6',0,'Front left fender','সামনের বাম ফেন্ডার'],['bp7',0,'Front right fender','সামনের ডান ফেন্ডার'],['bp8',0,'Front left door','সামনের বাম দরজা'],['bp9',0,'Front right door','সামনের ডান দরজা'],
-  ['bp10',0,'Rear left door','পেছনের বাম দরজা'],['bp11',0,'Rear right door','পেছনের ডান দরজা'],['bp12',0,'Rear left quarter','পেছনের বাম কোয়ার্টার'],['bp13',0,'Rear right quarter','পেছনের ডান কোয়ার্টার']]},
+  ['bpF',0,'Front: bumper and bonnet','সামনে: বাম্পার ও বনেট'],
+  ['bpL',0,'Left side: fender, doors and quarter','বাম পাশ: ফেন্ডার, দরজা ও কোয়ার্টার'],
+  ['bpR',0,'Right side: fender, doors and quarter','ডান পাশ: ফেন্ডার, দরজা ও কোয়ার্টার'],
+  ['bpB',0,'Rear: boot lid and bumper','পেছনে: বুটের ঢাকনা ও বাম্পার'],
+  ['bp3',0,'Roof','ছাদ']]},
  {k:'glass',w:6,items:[
-  ['g1',0,'All glass original (same brand and date marks)','সব কাচ অরিজিনাল (একই ব্র্যান্ড ও তারিখ চিহ্ন)'],
-  ['g2',0,'Glass rubber beading original, no re-seal or glue marks','কাচের রাবার বিডিং অরিজিনাল, নতুন সিল বা আঠার দাগ নেই'],
-  ['g3',0,'All lamps original, not aftermarket','সব লাইট অরিজিনাল, বাজারের নকল নয়'],
-  ['g4',0,'Headlights work on low and high beam, lenses clear','হেডলাইট লো ও হাই বিমে কাজ করে, লেন্স পরিষ্কার'],
-  ['g5',0,'Fog lights work','ফগ লাইট কাজ করে'],
-  ['g6',0,'Indicators and hazard lights work','ইন্ডিকেটর ও হ্যাজার্ড লাইট কাজ করে'],
-  ['g7',0,'Brake lights work, including the high stop light','ব্রেক লাইট কাজ করে, উপরের স্টপ লাইটসহ'],
-  ['g8',0,'Reverse lights work','রিভার্স লাইট কাজ করে'],
-  ['g9',0,'Number plate lights work','নম্বর প্লেট লাইট কাজ করে'],
-  ['g10',0,'No moisture inside any lamp','কোনো লাইটের ভেতরে পানি নেই']]},
+  ['g1',0,'All glass and lamps original: same brand and date marks, rubber beading not re-sealed','সব কাচ ও লাইট অরিজিনাল: একই ব্র্যান্ড ও তারিখ চিহ্ন, রাবার বিডিংয়ে নতুন সিল নেই'],
+  ['g4',0,'Headlights (low and high) and fog lights work, lenses clear, no moisture inside','হেডলাইট (লো ও হাই) ও ফগ লাইট কাজ করে, লেন্স পরিষ্কার, ভেতরে পানি নেই'],
+  ['g6',0,'Indicators, hazards, brake, reverse and number plate lights all work','ইন্ডিকেটর, হ্যাজার্ড, ব্রেক, রিভার্স ও নম্বর প্লেট লাইট সব কাজ করে']]},
  {k:'flood',w:10,items:[
-  ['f1',1,'No mud or silt under carpets and seats','কার্পেট ও সিটের নিচে কাদা বা বালি নেই'],
-  ['f2',1,'No rust on seat rails, seat bolts or pedals','সিট রেল, সিটের বোল্ট বা প্যাডেলে মরিচা নেই'],
-  ['f3',1,'No musty or damp smell inside','ভেতরে স্যাঁতসেঁতে বা পচা গন্ধ নেই'],
-  ['f4',1,'No water marks in boot, lamps or under the dashboard','বুট, লাইট বা ড্যাশবোর্ডের নিচে পানির দাগ নেই']]},
+  ['f1',1,'No mud, silt or water marks under carpets, seats, boot or dashboard','কার্পেট, সিট, বুট বা ড্যাশবোর্ডের নিচে কাদা, বালি বা পানির দাগ নেই'],
+  ['f2',1,'No rust on seat rails, bolts or pedals, no damp smell','সিট রেল, বোল্ট বা প্যাডেলে মরিচা নেই, স্যাঁতসেঁতে গন্ধ নেই']]},
  {k:'engine',w:14,items:[
-  ['e1',0,'Cold start is easy, no rattle','ঠান্ডা ইঞ্জিন সহজে চালু হয়, ঝনঝন শব্দ নেই'],
-  ['e2',0,'No oil leaks around the engine','ইঞ্জিনের চারপাশে তেল লিক নেই'],
-  ['e3',1,'Oil level OK, no milky residue under the oil cap','তেলের লেভেল ঠিক, অয়েল ক্যাপের নিচে দুধের মতো দাগ নেই'],
-  ['e4',0,'Coolant full and clean (pink or green, not brown)','কুল্যান্ট ভরা ও পরিষ্কার (গোলাপি বা সবুজ, বাদামি নয়)'],
+  ['e1',0,'Cold start easy, steady idle, no rattle, odd noise or shaking','ঠান্ডা অবস্থায় সহজে চালু, আইডল স্থির, ঝনঝন বা কাঁপুনি নেই'],
+  ['e2',1,'No oil leaks; oil level OK, no milky residue under the cap','তেল লিক নেই; লেভেল ঠিক, ক্যাপের নিচে দুধের মতো দাগ নেই'],
+  ['e4',0,'Coolant full and clean; radiator fan turns on, both speeds work','কুল্যান্ট ভরা ও পরিষ্কার; রেডিয়েটর ফ্যান চালু হয়, দুই স্পিডই কাজ করে'],
   ['e5',0,'No blue or white smoke from the exhaust','এক্সহস্ট থেকে নীল বা সাদা ধোঁয়া নেই'],
-  ['e6',0,'Steady idle, no odd noise or shaking','আইডল স্থির, অস্বাভাবিক শব্দ বা কাঁপুনি নেই'],
-  ['e7',0,'Belts and hoses in good shape','বেল্ট ও পাইপ ভালো অবস্থায়'],
-  ['e8',0,'Engine mounts OK (no big jerk into D or R)','ইঞ্জিন মাউন্ট ঠিক (D বা R দিলে জোরে ঝাঁকুনি নেই)'],
-  ['e9',0,'Gearbox oil clean, no burnt smell','গিয়ারবক্স অয়েল পরিষ্কার, পোড়া গন্ধ নেই'],
-  ['e10',0,'Radiator fan turns on when hot, both speeds work','গরম হলে রেডিয়েটর ফ্যান চালু হয়, দুই স্পিডই কাজ করে']]},
+  ['e7',0,'Belts, hoses and engine mounts OK (no big jerk into D or R)','বেল্ট, পাইপ ও ইঞ্জিন মাউন্ট ঠিক (D বা R দিলে জোরে ঝাঁকুনি নেই)'],
+  ['e9',0,'Gearbox oil clean, no burnt smell','গিয়ারবক্স অয়েল পরিষ্কার, পোড়া গন্ধ নেই']]},
  {k:'under',w:10,items:[
-  ['u1',0,'No engine oil or coolant leaks underneath','নিচে ইঞ্জিন অয়েল বা কুল্যান্ট লিক নেই'],
-  ['u2',0,'No gearbox oil leaks','গিয়ারবক্স অয়েল লিক নেই'],
-  ['u3',0,'CV axles OK, boots not torn','সিভি এক্সেল ঠিক, বুট ছেঁড়া নয়'],
-  ['u4',0,'Tie rods and tie rod ends tight, no play','টাই রড ও টাই রড এন্ড টাইট, ঢিলা নেই'],
-  ['u5',0,'Link rods (stabilizer links) no play or knock','লিংক রড (স্টেবিলাইজার লিংক) ঢিলা বা ঠকঠক নেই'],
-  ['u6',0,'Bounce test: press hard on each corner, the car settles in one bounce','বাউন্স টেস্ট: প্রতিটি কোণে জোরে চাপ দিন, একবারেই থেমে যায়'],
-  ['u7',0,'Suspension bushes and shocks: no leaks or cracks','সাসপেনশন বুশ ও শক: লিক বা ফাটল নেই'],
-  ['u8',0,'Exhaust intact, no heavy rust','এক্সহস্ট ঠিক আছে, বেশি মরিচা নেই'],
-  ['u9',0,'Brake discs and pads OK','ব্রেক ডিস্ক ও প্যাড ঠিক']]},
+  ['u1',0,'No engine oil, coolant or gearbox oil leaks underneath','নিচে ইঞ্জিন অয়েল, কুল্যান্ট বা গিয়ার অয়েল লিক নেই'],
+  ['u3',0,'CV axles, boots, tie rods and link rods tight, no play or torn boots','সিভি এক্সেল, বুট, টাই রড ও লিংক রড টাইট, ঢিলা বা ছেঁড়া বুট নেই'],
+  ['u6',0,'Suspension: bounce test settles in one bounce, shocks and bushes not leaking or cracked','সাসপেনশন: বাউন্স টেস্টে একবারেই থামে, শক ও বুশে লিক বা ফাটল নেই'],
+  ['u8',0,'Brake discs, pads and exhaust in good shape','ব্রেক ডিস্ক, প্যাড ও এক্সহস্ট ভালো অবস্থায়']]},
  {k:'tyres',w:5,items:[
-  ['t1',0,'Front left tyre: good tread, under 5 years, no cuts','সামনের বাম টায়ার: গ্রিপ ভালো, ৫ বছরের কম, কাটা নেই'],
-  ['t2',0,'Front right tyre: good tread, under 5 years, no cuts','সামনের ডান টায়ার: গ্রিপ ভালো, ৫ বছরের কম, কাটা নেই'],
-  ['t3',0,'Rear left tyre: good tread, under 5 years, no cuts','পেছনের বাম টায়ার: গ্রিপ ভালো, ৫ বছরের কম, কাটা নেই'],
-  ['t4',0,'Rear right tyre: good tread, under 5 years, no cuts','পেছনের ডান টায়ার: গ্রিপ ভালো, ৫ বছরের কম, কাটা নেই'],
-  ['t5',0,'All tyres wear evenly (alignment OK)','সব টায়ার সমানভাবে ক্ষয় (অ্যালাইনমেন্ট ঠিক)'],
+  ['t1',0,'All 4 tyres: good tread, under 5 years, no cuts, wearing evenly','৪টি টায়ার: গ্রিপ ভালো, ৫ বছরের কম, কাটা নেই, সমানভাবে ক্ষয়'],
   ['t6',0,'Rims not bent or cracked','রিম বাঁকা বা ফাটা নয়'],
-  ['t7',0,'Spare wheel present and usable','স্পেয়ার চাকা আছে ও ব্যবহারযোগ্য'],
-  ['t8',0,'Jack and wheel wrench present','জ্যাক ও হুইল রেঞ্চ আছে']]},
+  ['t7',0,'Spare wheel, jack and wheel wrench present','স্পেয়ার চাকা, জ্যাক ও হুইল রেঞ্চ আছে']]},
  {k:'interior',w:7,items:[
-  ['i1',0,'AC blows cold within 2 minutes','এসি ২ মিনিটের মধ্যে ঠান্ডা বাতাস দেয়'],
-  ['i2',0,'AC buttons and controls all work (fan speeds, modes, temperature)','এসির সব বাটন ও কন্ট্রোল কাজ করে (ফ্যান স্পিড, মোড, টেম্প)'],
+  ['i1',0,'AC cold within 2 minutes, all AC buttons and fan speeds work','এসি ২ মিনিটে ঠান্ডা, এসির সব বাটন ও ফ্যান স্পিড কাজ করে'],
   ['i3',0,'All warning lights go off after start','চালুর পর সব ওয়ার্নিং লাইট নিভে যায়'],
-  ['i4',0,'All switches work, no cut or taped wiring','সব সুইচ কাজ করে, কাটা বা টেপ দেওয়া তার নেই'],
-  ['i5',0,'All doors open and close smoothly, no dragging or hard slam needed','সব দরজা মসৃণভাবে খোলে ও বন্ধ হয়, আটকায় না বা জোরে লাগাতে হয় না'],
-  ['i16',0,'Door hinges firm: no sagging, squeaking or re-fitted bolts','দরজার কব্জা শক্ত: ঝুলে পড়া, কিচকিচ শব্দ বা খোলা বোল্ট নেই'],
-  ['i17',0,'Every door locks and unlocks with the key, the inside button and the central lock','প্রতিটি দরজা চাবি, ভেতরের বাটন ও সেন্ট্রাল লক দিয়ে লক-আনলক হয়'],
-  ['i6',0,'All windows work from every switch (driver panel and each door)','সব জানালা প্রতিটি সুইচ থেকে কাজ করে (ড্রাইভার প্যানেল ও প্রতিটি দরজা)'],
-  ['i7',0,'Mirrors adjust, and fold and unfold with the switch','মিরর অ্যাডজাস্ট হয়, সুইচে ফোল্ড ও আনফোল্ড হয়'],
-  ['i8',0,'Central lock and remote key work','সেন্ট্রাল লক ও রিমোট চাবি কাজ করে'],
-  ['i9',0,'Horn and wipers work','হর্ন ও ওয়াইপার কাজ করে'],
-  ['i10',0,'Audio, screen and reverse camera work','অডিও, স্ক্রিন ও রিভার্স ক্যামেরা কাজ করে'],
-  ['i11',0,'Glove box, drawers and storage boxes open and close','গ্লাভ বক্স, ড্রয়ার ও স্টোরেজ বক্স খোলে ও বন্ধ হয়'],
-  ['i12',0,'Plastic trims not broken or cracked, clips in place','প্লাস্টিক ট্রিম ভাঙা বা ফাটা নয়, ক্লিপ ঠিক আছে'],
-  ['i13',0,'Seats and roof lining clean, no tears','সিট ও ছাদের কাপড় পরিষ্কার, ছেঁড়া নেই'],
-  ['i14',0,'Wear on steering, pedals and seats matches the km','স্টিয়ারিং, প্যাডেল ও সিটের ক্ষয় কিলোমিটারের সাথে মিলে'],
-  ['i15',0,'Service history or records available','সার্ভিস হিস্ট্রি বা রেকর্ড আছে']]},
+  ['i4',0,'All switches, horn, wipers, audio, screen and reverse camera work; no cut or taped wiring','সব সুইচ, হর্ন, ওয়াইপার, অডিও, স্ক্রিন ও রিভার্স ক্যামেরা কাজ করে; কাটা বা টেপ দেওয়া তার নেই'],
+  ['i5',0,'Doors open and close smoothly, hinges firm, lock and unlock by key, button, central lock and remote','দরজা মসৃণভাবে খোলে-বন্ধ হয়, কব্জা শক্ত, চাবি, বাটন, সেন্ট্রাল লক ও রিমোটে লক-আনলক হয়'],
+  ['i6',0,'All windows and mirrors work from every switch, mirrors fold and unfold','সব জানালা ও মিরর প্রতিটি সুইচে কাজ করে, মিরর ফোল্ড-আনফোল্ড হয়'],
+  ['i11',0,'Glove box, drawers and plastic trims intact; seats and roof lining clean','গ্লাভ বক্স, ড্রয়ার ও প্লাস্টিক ট্রিম ঠিক; সিট ও ছাদের কাপড় পরিষ্কার'],
+  ['i14',0,'Wear on steering, pedals and seats matches the km; service records available','স্টিয়ারিং, প্যাডেল ও সিটের ক্ষয় কিলোমিটারের সাথে মিলে; সার্ভিস রেকর্ড আছে']]},
  {k:'gas',w:6,cond:'gas',items:[
-  ['k1',1,'Cylinder re-test date valid','সিলিন্ডার রি-টেস্টের মেয়াদ আছে'],
+  ['k1',1,'Cylinder re-test date valid, conversion papers available','সিলিন্ডার রি-টেস্টের মেয়াদ আছে, কনভার্শনের কাগজ আছে'],
   ['k2',1,'No gas smell; soap test shows no leaks','গ্যাসের গন্ধ নেই; সাবান-পানি টেস্টে লিক নেই'],
-  ['k3',0,'Cylinder mounted firmly, brackets not rusted','সিলিন্ডার শক্তভাবে লাগানো, ব্র্যাকেটে মরিচা নেই'],
-  ['k4',0,'Conversion papers and kit documents available','কনভার্শনের কাগজ ও কিটের ডকুমেন্ট আছে'],
-  ['k5',0,'Switches between petrol and gas smoothly','পেট্রোল ও গ্যাসের মধ্যে সহজে বদলায়'],
-  ['k6',0,'Regulator / reducer and pipes in good shape','রেগুলেটর / রিডিউসার ও পাইপ ভালো অবস্থায়'],
-  ['k7',0,'Engine runs smooth on gas, no misfire','গ্যাসে ইঞ্জিন মসৃণ চলে, মিসফায়ার নেই']]},
+  ['k3',0,'Cylinder mounted firmly; brackets, regulator and pipes in good shape','সিলিন্ডার শক্তভাবে লাগানো; ব্র্যাকেট, রেগুলেটর ও পাইপ ভালো অবস্থায়'],
+  ['k5',0,'Switches petrol to gas smoothly and runs smooth on gas','পেট্রোল থেকে গ্যাসে সহজে বদলায় ও গ্যাসে মসৃণ চলে']]},
  {k:'drive',w:12,items:[
-  ['d1',0,'Gear shifts smooth, no judder or slipping','গিয়ার বদল মসৃণ, ঝাঁকুনি বা স্লিপ নেই'],
-  ['d2',0,'RPM and speed rise together, no flare between gears','আরপিএম ও গতি একসাথে বাড়ে, গিয়ারের মাঝে আরপিএম লাফায় না'],
-  ['d3',0,'Throttle response quick, no hesitation','এক্সেলারেটরে দ্রুত সাড়া দেয়, আটকে যায় না'],
-  ['d4',0,'Brakes stop straight, no noise, pedal firm','ব্রেক সোজা থামায়, শব্দ নেই, প্যাডেল শক্ত'],
-  ['d5',0,'Steering centred, no pull to one side (alignment)','স্টিয়ারিং মাঝখানে, একদিকে টানে না (অ্যালাইনমেন্ট)'],
-  ['d6',0,'No wheel bearing hum (gets louder with speed or in turns)','হুইল বেয়ারিংয়ের গুনগুন শব্দ নেই (গতি বা মোড়ে বাড়ে)'],
-  ['d7',0,'No knocking over bumps','গর্তে বা স্পিড ব্রেকারে ঠকঠক শব্দ নেই'],
-  ['d8',0,'No vibration at 60–80 km/h or when braking','৬০–৮০ কিমি/ঘণ্টায় বা ব্রেকে কাঁপুনি নেই'],
-  ['d9',0,'Cabin quiet, no wind noise or rattles','কেবিন শান্ত, বাতাস বা খটখট শব্দ নেই'],
-  ['d10',0,'Engine noise normal under acceleration','এক্সেলারেশনে ইঞ্জিনের শব্দ স্বাভাবিক'],
+  ['d1',0,'Gear shifts smooth, RPM and speed rise together, no slipping','গিয়ার বদল মসৃণ, আরপিএম ও গতি একসাথে বাড়ে, স্লিপ নেই'],
+  ['d3',0,'Throttle response quick, engine sounds normal when accelerating','এক্সেলারেটরে দ্রুত সাড়া, এক্সেলারেশনে ইঞ্জিনের শব্দ স্বাভাবিক'],
+  ['d4',0,'Brakes and steering: stops straight, firm pedal, no pull to one side','ব্রেক ও স্টিয়ারিং: সোজা থামে, প্যাডেল শক্ত, একদিকে টানে না'],
+  ['d6',0,'No wheel bearing hum, knocks over bumps, vibration at 60–80 km/h or cabin rattles','হুইল বেয়ারিংয়ের শব্দ, গর্তে ঠকঠক, ৬০–৮০ কিমিতে কাঁপুনি বা কেবিনে খটখট নেই'],
   ['d11',0,'Speedometer matches GPS speed (see Scan tab)','স্পিডোমিটার জিপিএস গতির সাথে মিলে (স্ক্যান ট্যাব দেখুন)'],
   ['d12',0,'Hybrid: EV mode works, no hybrid warning','হাইব্রিড: ইভি মোড কাজ করে, হাইব্রিড ওয়ার্নিং নেই','hyb']]},
  {k:'mechanic',w:5,items:[
   ['m1',1,'Our mechanic approves the car','আমাদের মেকানিক গাড়িটি অনুমোদন করেছেন'],
   ['m2',0,'Compression test: all cylinders within 10% of each other (if done)','কমপ্রেশন টেস্ট: সব সিলিন্ডারের চাপ একে অপরের ১০% এর মধ্যে (করা হলে)']]}
 ];
+/* old item ids -> merged id, so inspections saved before the merge keep their ratings */
+const MERGED={p1:['p1','p10'],p2:['p2','p9'],p3:['p3','p4'],p6:['p6','p7','p8'],
+  fr1:['fr1','fr2'],fr4:['fr4','fr5','fr8'],fr6:['fr6','fr7'],
+  bpF:['bp1','bp2'],bpL:['bp6','bp8','bp10','bp12'],bpR:['bp7','bp9','bp11','bp13'],bpB:['bp4','bp5'],
+  g1:['g1','g2','g3'],g4:['g4','g5','g10'],g6:['g6','g7','g8','g9'],f1:['f1','f4'],f2:['f2','f3'],
+  e1:['e1','e6'],e2:['e2','e3'],e4:['e4','e10'],e7:['e7','e8'],u1:['u1','u2'],u3:['u3','u4','u5'],u6:['u6','u7'],u8:['u8','u9'],
+  t1:['t1','t2','t3','t4','t5'],t7:['t7','t8'],i1:['i1','i2'],i4:['i4','i9','i10'],i5:['i5','i16','i17','i8'],i6:['i6','i7'],i11:['i11','i12','i13'],i14:['i14','i15'],
+  k1:['k1','k4'],k3:['k3','k6'],k5:['k5','k7'],d1:['d1','d2'],d3:['d3','d10'],d4:['d4','d5'],d6:['d6','d7','d8','d9']};
+const RANK={major:4,minor:3,ok:2,na:1};
+function mergeChecks(ch){if(!ch)return ch;const ids=new Set(SECTIONS.flatMap(s=>s.items.map(i=>i[0])));
+  const oldOnly=new Set(Object.values(MERGED).flat().filter(o=>!ids.has(o)));
+  if(!Object.keys(ch).some(k=>oldOnly.has(k)))return ch;
+  const out={};const used=new Set();
+  for(const nid in MERGED){MERGED[nid].forEach(o=>used.add(o));const src=MERGED[nid].filter(o=>ch[o]&&ch[o].r);if(!src.length)continue;
+    const worst=src.reduce((a,o)=>RANK[ch[o].r]>RANK[a.r]?ch[o]:a,ch[src[0]]);
+    const cost=src.reduce((s,o)=>s+(+ch[o].cost||0),0);
+    out[nid]={r:worst.r,cost:cost||'',note:src.map(o=>ch[o].note).filter(Boolean).join('; '),photos:src.flatMap(o=>ch[o].photos||[])};}
+  for(const k in ch)if(!used.has(k))out[k]=ch[k];
+  return out;}
 const secOn=sec=>!sec.cond||(sec.cond==='gas'&&isGas());
 const itemOn=it=>it[4]!=='hyb'||isHyb();
 
@@ -627,15 +674,15 @@ class DemoLink{
 /* ---------- state ---------- */
 function blank(){return{id:'i'+Date.now().toString(36),created:new Date().toISOString(),sample:false,
   car:{fuel:'',model:'',year:'',km:'',chassis:'',regNo:'',color:'',colorOther:'',location:'',seller:'',phone:'',link:'',sellerType:'',asking:'',market:'',profit:40000,papersCost:15000,adsCost:12000,inspector:''},
-  scan:null,hybrid:{health:'',weak:''},checks:{},notes:''}}
+  scan:null,hybrid:{health:'',weak:''},checks:{},notes:'',ai:[]}}
 function sampleState(){const s=blank();s.sample=true;
   Object.assign(s.car,{fuel:'hybrid',model:'axio_h',year:'2016',km:'86500',chassis:'NKE165-7123456',regNo:'Chatta Metro-Ga 11-2345',color:'pearl',location:'GEC, Chattogram',seller:'Example seller',sellerType:'owner',asking:'1650000',market:'1720000',inspector:'Example Motors'});
   SECTIONS.forEach(sec=>sec.items.forEach(it=>{if(sec.cond==='gas')return;s.checks[it[0]]={r:'ok',cost:'',note:''}}));
   const set=(id,r,cost,note)=>s.checks[id]={r,cost:cost||'',note:note||''};
-  set('p7','minor',3000,'Fitness expires next month');set('fr6','minor',0,'Front right fender bolts turned — matches repaint');
-  set('bp7','minor',6000,'Scrape on front right fender');set('bp1','minor',3500,'Small crack under front bumper');
-  set('g5','minor',2500,'Left fog light not working');set('u5','minor',3500,'Front left link rod knocks');set('t1','minor',8000,'2019 tyre');set('t2','minor',8000,'2019 tyre');
-  set('i12','minor',1500,'Broken clip on glove box');set('i15','minor');set('d7','minor');set('m2','na');
+  set('p6','minor',3000,'Fitness expires next month');set('fr6','minor',0,'Front right fender bolts turned — matches repaint');
+  set('bpR','minor',6000,'Scrape on front right fender');set('bpF','minor',3500,'Small crack under front bumper');
+  set('g4','minor',2500,'Left fog light not working');set('u3','minor',3500,'Front left link rod knocks');set('t1','minor',16000,'Both front tyres from 2019');
+  set('i11','minor',1500,'Broken clip on glove box');set('i14','minor',0,'No service records');set('d6','minor',0,'Light knock over bumps, front left');set('m2','na');
   s.hybrid={health:'82',weak:'1'};
   s.scan={at:new Date().toISOString(),demo:true,proto:'6',isCan:true,vin:null,adapterVolt:14.1,odo:null,
     mon:parseMonitors([0x00,0x07,0x65,0x21]),stored:[],pending:['P0171'],permanent:[],distCleared:38,timeCleared:45,warmups:3,distMil:0,
@@ -644,11 +691,123 @@ function sampleState(){const s=blank();s.sample=true;
   s.notes='Example only. Seller says the front right fender was repainted after a parking scrape.';
   return s;}
 function migrate(s){if(!s||!s.car)return null;if(!s.car.fuel)s.car.fuel=s.car.hybrid?'hybrid':'';delete s.car.hybrid;delete s.paint;delete s.car.grade;
-  if(s.car.color&&!COLORS.some(c=>c[0]===s.car.color)){s.car.colorOther=s.car.color;s.car.color='other'}return s;}
+  if(s.car.color&&!COLORS.some(c=>c[0]===s.car.color)){s.car.colorOther=s.car.color;s.car.color='other'}
+  s.checks=mergeChecks(s.checks||{});if(!s.ai)s.ai=[];return s;}
 let S=migrate(store.get('cc.current',null))||sampleState();
 let tab=store.get('cc.tab','car');
 let link=null,linkName='',busy=false,recording=false,logLines=[],liveNow={},sup=null,gpsWatch=null,gpsSpeed=null,useGps=false,acStage='ready';
 const save=()=>store.set('cc.current',S);
+
+/* ---------- photos: IndexedDB on this phone, one record per photo (full JPEG + thumbnail) ---------- */
+const PCATS=['docs','outside','inside','engine','under','damage'];
+let PH=[],TURL={},phCat='docs',phTarget=null;
+const DB={db:null,
+  open(){if(this.db)return Promise.resolve(this.db);return new Promise((res,rej)=>{let r;try{r=indexedDB.open('carcheck',1)}catch(e){return rej(e)}
+    r.onupgradeneeded=()=>{const st=r.result.createObjectStore('photos',{keyPath:'id'});st.createIndex('insp','insp')};
+    r.onsuccess=()=>{this.db=r.result;res(this.db)};r.onerror=()=>rej(r.error)})},
+  async run(mode,fn){const db=await this.open();return new Promise((res,rej)=>{const tx=db.transaction('photos',mode);let out;
+    Promise.resolve(fn(tx.objectStore('photos'))).then(v=>out=v);tx.oncomplete=()=>res(out);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)})},
+  req:q=>new Promise(r=>{q.onsuccess=()=>r(q.result)}),
+  put(rec){return this.run('readwrite',st=>{st.put(rec)})},
+  del(id){return this.run('readwrite',st=>{st.delete(id)})},
+  get(id){return this.run('readonly',st=>this.req(st.get(id)))},
+  byInsp(insp){return this.run('readonly',st=>this.req(st.index('insp').getAll(insp)))},
+  pairs(){return this.run('readonly',st=>new Promise(r=>{const out=[];const c=st.index('insp').openKeyCursor();c.onsuccess=()=>{const k=c.result;if(!k)return r(out);out.push([k.key,k.primaryKey]);k.continue()}}))}};
+function loadImg(blob){return new Promise((res,rej)=>{const u=URL.createObjectURL(blob);const im=new Image();im.onload=()=>res({im,u});im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('image'))};im.src=u})}
+function toJpeg(im,max,q){const s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));const c=document.createElement('canvas');
+  c.width=Math.max(1,Math.round(im.naturalWidth*s));c.height=Math.max(1,Math.round(im.naturalHeight*s));c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  return new Promise(r=>c.toBlob(b=>r(b),'image/jpeg',q))}
+async function makeRec(blob,meta){const {im,u}=await loadImg(blob);try{const full=await toJpeg(im,1600,.82),thumb=await toJpeg(im,360,.72);return Object.assign({full,thumb},meta)}finally{URL.revokeObjectURL(u)}}
+const newPhId=()=>'ph'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+async function loadPhotos(){Object.values(TURL).forEach(u=>URL.revokeObjectURL(u));TURL={};PH=[];const id=S.id;
+  try{const recs=await DB.byInsp(id);if(id!==S.id)return;recs.sort((a,b)=>a.created.localeCompare(b.created));
+    PH=recs.map(r=>{TURL[r.id]=URL.createObjectURL(r.thumb);return{id:r.id,cat:r.cat,item:r.item||'',created:r.created}})}catch(e){}
+  if(tab!=='scan'&&tab!=='saved')render();}
+async function addPhotos(files,cat,item){if(!files.length)return;toast(t('savingPh'));let n=0;
+  for(const f of files){try{const rec=await makeRec(f,{id:newPhId(),insp:S.id,cat,item:item||'',created:new Date().toISOString()});await DB.put(rec);
+      TURL[rec.id]=URL.createObjectURL(rec.thumb);PH.push({id:rec.id,cat,item:item||'',created:rec.created});n++}catch(e){}}
+  if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+  toast(n?t('phSaved'):t('phFail'));if(item&&tab==='check')updateItem(item);else render();}
+async function cleanOrphans(){try{const keep=new Set(store.get('cc.list',[]).map(x=>x.id).concat(S.id));
+  for(const [insp,id] of await DB.pairs())if(!keep.has(insp))await DB.del(id)}catch(e){}}
+const catName=c=>t('pc_'+c);
+function itemLabel(id){for(const s of SECTIONS)for(const it of s.items)if(it[0]===id)return bi(it[2],it[3]);return''}
+const thumbHtml=p=>`<button type="button" class="ph" data-act="viewph" data-id="${p.id}"><img src="${TURL[p.id]||''}" alt="${esc(p.item?itemLabel(p.item):catName(p.cat))}" loading="lazy"><span>${esc(catName(p.cat))}</span></button>`;
+let viewUrl=null;
+async function viewPhoto(id){const p=PH.find(x=>x.id===id);if(!p)return;const rec=await DB.get(id).catch(()=>null);if(!rec)return;
+  if(viewUrl)URL.revokeObjectURL(viewUrl);viewUrl=URL.createObjectURL(rec.full);const v=document.getElementById('viewer');
+  v.innerHTML=`<div class="vbar"><span>${esc(catName(p.cat))}${p.item?' · '+esc(itemLabel(p.item)):''}</span><span class="row" id="vact"><button class="btn" data-act="askDelPh" data-id="${id}">${t('delPhoto')}</button><button class="btn primary" data-act="closeView">${t('close')}</button></span></div><img src="${viewUrl}" alt="">`;
+  v.hidden=false;}
+function closeViewer(){const v=document.getElementById('viewer');v.hidden=true;v.innerHTML='';if(viewUrl){URL.revokeObjectURL(viewUrl);viewUrl=null}}
+async function exportPhotos(ids){const out={};for(const id of ids){const recs=await DB.byInsp(id).catch(()=>[]);if(!recs.length)continue;
+  out[id]=await Promise.all(recs.map(async r=>({id:r.id,cat:r.cat,item:r.item,created:r.created,data:await blobToDataUrl(r.full)})))}return out;}
+function blobToDataUrl(b){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=()=>rej(fr.error);fr.readAsDataURL(b)})}
+async function importPhotos(map){for(const insp in map||{})for(const p of map[insp]){try{if(await DB.get(p.id))continue;const blob=await (await fetch(p.data)).blob();
+  await DB.put(await makeRec(blob,{id:p.id,insp,cat:p.cat,item:p.item||'',created:p.created}))}catch(e){}}}
+
+/* ---------- Ask Claude: Messages API called straight from the phone with the user's own key ---------- */
+const AI_MODEL='claude-opus-5-5';
+let aiBusy='';
+const aiKey=()=>store.get('cc.key','');
+function inspContext(){const R=compute(),c=S.car,m=MODEL_MAP[c.model],p=R.price;const L2=[];
+  L2.push('CAR: '+[c.year,m?m.name:c.model,c.fuel?T.en[c.fuel]:'',c.km?c.km+' km':'',c.color?(c.color==='other'?c.colorOther:c.color):'',c.location].filter(Boolean).join(', '));
+  if(c.sellerType)L2.push('Seller type: '+T.en[c.sellerType]);
+  if(p)L2.push(`PRICE (BDT): asking ${c.asking||'?'}, market price of a clean one ${p.market}, our max buy ${Math.round(p.maxBuy)} (after repairs ${p.repairs}, papers/ads ${p.fees}, target profit ${p.profit}), fair value ${Math.round(p.fair)}`);
+  L2.push(`SCORE: ${R.score==null?'not enough data':Math.round(R.score)+'/100'}, app verdict: ${R.verdict?T.en[R.verdict]:'-'}, ${Math.round(R.progress*100)}% of checklist done`);
+  if(R.fails.length)L2.push('DEAL BREAKERS: '+R.fails.join('; '));
+  const iss=R.issues.filter(i=>i.r!=='na');
+  L2.push('PROBLEMS MARKED:'+(iss.length?'\n'+iss.map(i=>`- [${i.r}] ${T.en['sec_'+i.sec]}: ${i.en}${i.cost?' (repair est. '+i.cost+' BDT)':''}${i.note?' — note: '+i.note:''}`).join('\n'):' none'));
+  if(R.scan.findings.length)L2.push('SCANNER:\n'+R.scan.findings.map(f=>'- '+f.en).join('\n'));
+  if(isHyb()&&S.hybrid.health!=='')L2.push(`Hybrid battery health ${S.hybrid.health}%, weak blocks ${S.hybrid.weak||'?'}`);
+  if(S.notes)L2.push('NOTES: '+S.notes);
+  return L2.join('\n');}
+function aiSystem(){return `You help a small used-car buy-fix-sell business in Chattogram, Bangladesh decide on the spot, while they stand with the seller. Cars are mostly Japanese reconditioned Toyota and Honda models, often converted to CNG or LPG, plus hybrids.
+Be direct and short: the answer is read on a phone. For a buy decision, the first line is one of BUY, NEGOTIATE (with the price to offer in BDT) or WALK AWAY. For a single problem, the first line says what it most likely is and whether it is a deal breaker.
+Then at most 5 short bullet points. Give repair costs as rough BDT ranges at local Chattogram workshops and call them estimates. If photos are attached, say what you see in them that matters. If something important was not checked, say exactly what to check next. End with one sentence they can say to the seller.
+Use only the inspection data and photos given; do not invent results. ${L==='bn'?'Reply in Bangla.':'Reply in English.'}`;}
+async function aiImages(list){const out=[];for(const p of list){const rec=await DB.get(p.id).catch(()=>null);if(!rec)continue;
+  const d=await blobToDataUrl(rec.full);out.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:d.split(',')[1]}})}return out;}
+function pickPhotos(item){if(item)return PH.filter(p=>p.item===item).slice(-4);
+  const pri={damage:0,outside:1,engine:2,under:3,inside:4};return PH.filter(p=>p.cat!=='docs').sort((a,b)=>pri[a.cat]-pri[b.cat]).slice(0,6);}
+async function claudeStream(content,effort,onText){const body={model:AI_MODEL,max_tokens:16000,stream:true,system:aiSystem(),output_config:{effort},
+    fallbacks:'default',messages:[{role:'user',content}]};
+  const send=(b,beta)=>fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:Object.assign({'content-type':'application/json','x-api-key':aiKey(),
+    'anthropic-version':'2026-10-21','anthropic-dangerous-direct-browser-access':'true'},beta?{'anthropic-beta':'server-side-fallback-2026-07-01'}:{}),body:JSON.stringify(b)});
+  let res;try{res=await send(body,true);
+    if(res.status===400){const txt=await res.clone().text();if(/fallback/i.test(txt)){const b2=Object.assign({},body);delete b2.fallbacks;res=await send(b2,false)}}}
+  catch(e){throw new Error(t('aiErrNet'))}
+  if(!res.ok){let msg='';try{msg=(await res.json()).error.message}catch(e){}
+    if(res.status===401||res.status===403)throw new Error(t('aiErrKey'));if(res.status===429||res.status>=500)throw new Error(t('aiErrBusy'));throw new Error(t('aiErr')+' '+msg)}
+  const rd=res.body.getReader(),dec=new TextDecoder();let buf='',text='',stop='';
+  for(;;){const {value,done}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
+    while((i=buf.indexOf('\n\n'))>=0){const chunk=buf.slice(0,i);buf=buf.slice(i+2);
+      for(const line of chunk.split('\n')){if(!line.startsWith('data:'))continue;let ev;try{ev=JSON.parse(line.slice(5))}catch(e){continue}
+        if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){text+=ev.delta.text;onText(text)}
+        else if(ev.type==='message_delta'&&ev.delta&&ev.delta.stop_reason)stop=ev.delta.stop_reason;
+        else if(ev.type==='error')throw new Error(t('aiErr')+' '+((ev.error&&ev.error.message)||''))}}}
+  if(stop==='refusal'&&!text.trim())throw new Error(t('aiRefused'));
+  return text;}
+function md(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').split('\n').map(l=>{const m=l.match(/^\s*[-*•]\s+(.*)/);if(m)return`<li>${m[1]}</li>`;
+  const h=l.match(/^#+\s*(.*)/);return h?`<p><b>${h[1]}</b></p>`:l.trim()?`<p>${l}</p>`:''}).join('').replace(/(<li>.*?<\/li>)+/g,x=>`<ul>${x}</ul>`);}
+function copyForClaude(question,item){const txt=`${aiSystem()}\n\nQUESTION: ${question}${item?'\nPROBLEM: '+(SECTIONS.flatMap(s=>s.items).find(i=>i[0]===item)||[])[2]:''}\n\nINSPECTION:\n${inspContext()}`;
+  const done=()=>toast(t('aiCopied'));try{navigator.clipboard.writeText(txt).then(done,()=>{})}catch(e){}window.open('https://claude.ai/new','_blank');}
+async function askReport(kind,question,withPhotos){if(aiBusy)return;const q=kind==='verdict'?t('aiQVerdict'):question;if(!q)return;
+  if(!aiKey()){copyForClaude(kind==='verdict'?'Should we buy this car? Answer BUY, NEGOTIATE (with price) or WALK AWAY.':q);return}
+  const entry={id:'a'+Date.now().toString(36),q,a:'',at:new Date().toISOString(),err:''};S.ai.unshift(entry);aiBusy=entry.id;render();
+  const el=()=>document.getElementById('aiA_'+entry.id);
+  try{const imgs=withPhotos?await aiImages(pickPhotos()):[];
+    const content=[...imgs,{type:'text',text:`INSPECTION:\n${inspContext()}\n\nQUESTION: ${kind==='verdict'?'Should we buy this car? Give BUY, NEGOTIATE (with the price to offer) or WALK AWAY.':q}${imgs.length?`\n(${imgs.length} photos of the car attached)`:''}`}];
+    entry.a=await claudeStream(content,kind==='verdict'?'medium':'low',txt=>{entry.a=txt;const e=el();if(e)e.innerHTML=md(txt)});}
+  catch(e){entry.err=e.message}
+  aiBusy='';save();render();}
+async function askItem(id){if(aiBusy)return;const it=SECTIONS.flatMap(s=>s.items).find(i=>i[0]===id);const c=S.checks[id]||{};
+  const q=`Problem found: "${it[2]}" rated ${c.r||'?'}${c.cost?', our repair estimate '+c.cost+' BDT':''}${c.note?', note: '+c.note:''}. What does this most likely mean, what does it cost to fix in Chattogram, is it a deal breaker, and what should we check next?`;
+  if(!aiKey()){copyForClaude(q);return}
+  aiBusy=id;c.ai='';c.aiErr='';S.checks[id]=c;updateItem(id);const el=()=>document.getElementById('ai_'+id);
+  try{const imgs=await aiImages(pickPhotos(id));
+    c.ai=await claudeStream([...imgs,{type:'text',text:`INSPECTION:\n${inspContext()}\n\n${q}${imgs.length?`\n(${imgs.length} photos of this problem attached)`:''}`}],'low',txt=>{c.ai=txt;const e=el();if(e)e.innerHTML=md(txt)})}
+  catch(e){c.aiErr=e.message}
+  aiBusy='';save();if(tab==='check')updateItem(id);}
 
 /* ---------- scan logic ---------- */
 function log(cmd,res){logLines.push('> '+cmd+'\n'+String(res).replace(/\r/g,'\n').replace(/\n+/g,'\n').trim());if(logLines.length>500)logLines.shift();
@@ -782,7 +941,7 @@ function compute(){
     for(const it of sec.items){if(!itemOn(it))continue;total++;const c=S.checks[it[0]];
       if(c&&c.r&&c.r!=='ok'&&c.r!=='na'&&c.cost)repairs+=+c.cost||0;
       if(!c||!c.r)continue;rated++;if(c.r==='na')continue;sum+=sec.two?(c.r==='ok'?1:.8):RVAL[c.r];n++;
-      if(c.r!=='ok')issues.push({sec:sec.k,label:bi(it[2],it[3]),r:c.r,cost:+c.cost||0,note:c.note||''});
+      if(c.r!=='ok')issues.push({id:it[0],en:it[2],sec:sec.k,label:bi(it[2],it[3]),r:c.r,cost:+c.cost||0,note:c.note||''});
       if(c.r==='major'&&it[1])fails.push(bi(it[2],it[3]));}
     if(n)secs.push({k:sec.k,w:sec.w,s:sum/n*100});}
   const an=analyzeScan(S.scan,hyb);if(an.score!=null)secs.push({k:'scan',w:15,s:an.score});
@@ -839,6 +998,7 @@ function vCar(){const c=S.car,m=MODEL_MAP[c.model];
     <div class="grid2">${fld(t('chassis'),inp('car.chassis','text',c.chassis))}${fld(t('regNo'),inp('car.regNo','text',c.regNo))}</div>
     <div style="display:grid;gap:8px"><span class="eyebrow">${t('color')}</span><div class="swatches">${sw}</div>
       ${c.color==='other'?inp('car.colorOther','text',c.colorOther,'placeholder="'+t('otherColor')+'" aria-label="'+t('otherColor')+'"'):''}</div></section>
+  ${photosCard()}
   ${m&&TIPS[m.tip]?`<section class="card">${chead('engine',t('watch')+': '+esc(m.name),'h3')}<ul class="tips">${TIPS[m.tip].map(x=>`<li>${esc(bi(x[0],x[1]))}</li>`).join('')}</ul></section>`:''}
   <section class="card">${chead('seller',t('sellerH'))}
     <div class="grid2">${fld(t('seller'),inp('car.seller','text',c.seller))}${fld(t('phone'),inp('car.phone','tel',c.phone))}</div>
@@ -850,10 +1010,25 @@ function vCar(){const c=S.car,m=MODEL_MAP[c.model];
     <div class="grid2">${fld(t('profit'),inp('car.profit','number',c.profit,'inputmode="numeric"'))}${fld(t('papersCost'),inp('car.papersCost','number',c.papersCost,'inputmode="numeric"'))}</div>
     <div class="grid2">${fld(t('adsCost'),inp('car.adsCost','number',c.adsCost,'inputmode="numeric"'))}${fld(t('inspector'),inp('car.inspector','text',c.inspector))}</div></section>`;}
 
+function photosCard(){
+  const cats=PCATS.map(k=>`<button type="button" class="chip" data-act="phcat" data-v="${k}" aria-pressed="${phCat===k}">${esc(catName(k))}${PH.some(p=>p.cat===k)?` <b>${fmt(PH.filter(p=>p.cat===k).length)}</b>`:''}</button>`).join('');
+  const groups=PCATS.filter(k=>PH.some(p=>p.cat===k)).map(k=>`<div class="phgroup"><span class="eyebrow">${esc(catName(k))}</span><div class="thumbs">${PH.filter(p=>p.cat===k).map(thumbHtml).join('')}</div></div>`).join('');
+  return `<section class="card">${chead('camera',t('photosH'))}<p class="hint">${t('photosHint')}</p><div class="chips">${cats}</div>
+    <button type="button" class="btn primary block" data-act="addph" data-v="${phCat}">${svg('camera')} ${t('addPhotos')} · ${esc(catName(phCat))}</button>
+    ${groups||`<p class="muted small">${t('noPhotos')}</p>`}</section>`;}
+function aiCard(){const has=!!aiKey();
+  return `<section class="card aicard no-print">${chead('spark',t('aiH'))}<p class="hint">${has?t('aiHint'):t('aiNoKey')}</p>
+    <button type="button" class="btn primary block" data-act="aiVerdict" ${aiBusy?'disabled':''}>${svg('spark')} ${t('aiVerdict')}</button>
+    <div class="askrow"><input type="text" id="aiQ" placeholder="${esc(t('aiAskPh'))}" aria-label="${esc(t('aiAskPh'))}"><button type="button" class="btn" data-act="aiAsk" ${aiBusy?'disabled':''}>${t('aiSend')}</button></div>
+    ${has?`<label class="check"><input type="checkbox" id="aiPh" ${store.get('cc.aiph',true)?'checked':''} data-act="aiph">${t('aiPhotos')}</label>`:''}
+    ${S.ai.map(a=>`<div class="aiq"><div class="q">${esc(a.q)} <span class="small muted">${new Date(a.at).toLocaleTimeString(L==='bn'?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit'})}</span></div>
+      ${a.err?`<div class="callout warn small">${esc(a.err)}</div>`:`<div class="aians" id="aiA_${a.id}">${a.a?md(a.a):`<p class="muted">${t('aiThinking')}</p>`}</div>`}</div>`).join('')}
+    ${S.ai.length&&!aiBusy?`<button type="button" class="btn sm" data-act="aiClear">${t('aiDel')}</button>`:''}</section>`;}
+const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 function vScan(){const sc=S.scan,hyb=isHyb(),btOk=!!navigator.bluetooth;
   const conn=link?`<div class="status"><span class="led on"></span><b>${link.demo?t('demoMode'):t('connectedTo')+' '+esc(linkName)}</b></div>`:`<div class="status"><span class="led"></span><span class="muted">${t('notConnected')}</span></div>`;
-  let h=`<section class="card"><h2>${t('scan')}</h2>${conn}<p class="hint">${t('scanHint')}</p>
-    ${!btOk&&!link?`<div class="callout warn small">${t('noBt')}</div>`:''}
+  let h=`<section class="card"><h2>${t('scan')}</h2>${conn}<p class="hint">${t('scanHint')} ${t('bleNote')}</p>
+    ${!btOk&&!link?`<div class="callout warn small">${isIOS()?t('iosBt'):t('noBt')}</div>`:''}
     <div class="row">${link?`<button class="btn primary" data-act="full" ${busy||recording?'disabled':''}>${busy?t('scanning'):t('fullScan')}</button><button class="btn" data-act="disc">${t('disconnect')}</button>`
       :`<button class="btn primary" data-act="conn" ${btOk?'':'disabled'}>${t('connect')}</button><button class="btn" data-act="demo">${t('demo')}</button>`}</div></section>`;
   if(sc&&sc.mon!==undefined){const an=analyzeScan(sc,hyb),m=sc.mon,dl=arr=>arr&&arr.length?`<div class="codes">${arr.map(c=>`<div class="code"><span class="c">${c}</span><span>${esc(dtcText(c))}</span></div>`).join('')}</div>`:`<span class="pill good">${t('none')}</span>`;
@@ -910,7 +1085,11 @@ function itemHtml(sec,it){const c=S.checks[it[0]]||{};
   const opts=sec.two?[['ok','ok'],['minor','fix']]:[['ok','ok'],['minor','minor'],['major','major'],['na','na']];
   return `<div class="item ${sec.two?'two':''}" data-item="${it[0]}"><div class="lbl">${esc(bi(it[2],it[3]))}${it[1]?`<span class="crit">${t('mustPass')}</span>`:''}</div>
     <div class="rate">${opts.map(o=>`<button type="button" class="${o[0]}" data-act="rate" data-id="${it[0]}" data-v="${o[0]}" aria-pressed="${c.r===o[0]}">${rsvg(o[0])}${t(o[1])}</button>`).join('')}</div>
-    ${c.r==='minor'||c.r==='major'?`<div class="extra">${inp('checks.'+it[0]+'.cost','number',c.cost||'','inputmode="numeric" placeholder="'+t('cost')+'" aria-label="'+t('cost')+'"')}${inp('checks.'+it[0]+'.note','text',c.note||'','placeholder="'+t('note')+'" aria-label="'+t('note')+'"')}</div>`:''}</div>`;}
+    ${c.r==='minor'||c.r==='major'?`<div class="extra">${inp('checks.'+it[0]+'.cost','number',c.cost||'','inputmode="numeric" placeholder="'+t('cost')+'" aria-label="'+t('cost')+'"')}${inp('checks.'+it[0]+'.note','text',c.note||'','placeholder="'+t('note')+'" aria-label="'+t('note')+'"')}</div>
+      <div class="itools"><button type="button" class="btn sm" data-act="addph" data-v="damage" data-id="${it[0]}">${svg('camera')}${t('photo')}</button><button type="button" class="btn sm ai" data-act="askItem" data-id="${it[0]}" ${aiBusy?'disabled':''}>${svg('spark')}${aiBusy===it[0]?t('aiThinking'):t('askItem')}</button></div>`:''}
+    ${PH.some(p=>p.item===it[0])?`<div class="thumbs">${PH.filter(p=>p.item===it[0]).map(thumbHtml).join('')}</div>`:''}
+    ${c.ai||aiBusy===it[0]?`<div class="aians" id="ai_${it[0]}">${c.ai?md(c.ai):`<p class="muted">${t('aiThinking')}</p>`}</div>`:''}
+    ${c.aiErr?`<div class="callout warn small">${esc(c.aiErr)}</div>`:''}</div>`;}
 function secStatus(sec){const items=sec.items.filter(itemOn);const n=items.filter(it=>S.checks[it[0]]&&S.checks[it[0]].r).length;
   const bad=items.some(it=>S.checks[it[0]]&&S.checks[it[0]].r==='major'),warn=items.some(it=>S.checks[it[0]]&&S.checks[it[0]].r==='minor');
   return{n,total:items.length,cls:n===items.length?(bad?'bad':warn?'warn':'good'):'info'};}
@@ -920,6 +1099,7 @@ function secHead(sec){const s=secStatus(sec);
 function vCheck(){
   return SECTIONS.filter(secOn).map(sec=>`<details class="sec" data-sec="${sec.k}" ${openSecs[sec.k]?'open':''}><summary>${secHead(sec)}</summary>
       ${sec.two?`<p class="sechint">${t('panelHint')}</p>`:''}
+      <div class="secbar"><button type="button" class="btn small" data-act="allok" data-v="${sec.k}">${rsvg('ok')}${t('allOk')}</button><span class="hint">${t('allOkHint')}</span></div>
       <div class="items">${sec.items.filter(itemOn).map(it=>itemHtml(sec,it)).join('')}</div></details>`).join('');}
 function updateItem(id){const sec=SECTIONS.find(s=>s.items.some(i=>i[0]===id));const it=sec.items.find(i=>i[0]===id);
   const el=document.querySelector(`[data-item="${id}"]`);if(el)el.outerHTML=itemHtml(sec,it);
@@ -939,7 +1119,7 @@ function vReport(){const R=compute(),c=S.car,p=R.price;
     <div class="hero">${gauge(R.score,R.verdict)}<div style="display:grid;gap:6px;min-width:0"><div class="verdict">${esc(carName()||'—')}</div>
       ${R.verdict?`<span class="pill ${vClass(R.verdict)}" style="justify-self:start">${t(R.verdict)}</span>`:''}
       <span class="small muted">${[c.fuel?t(c.fuel):'',c.km?fmt(c.km)+' '+t('km_u'):'',c.chassis,c.regNo,colorName(c)].filter(Boolean).map(esc).join(' · ')}</span>
-      <span class="small muted">${fmt(Math.round(R.progress*100))}% ${t('checked')}</span></div></div></section>`;
+      <span class="small muted">${fmt(Math.round(R.progress*100))}% ${t('checked')}</span></div></div></section>`+aiCard();
   if(R.fails.length)h+=`<section class="card"><h3 style="color:var(--bad)">${t('hardFails')}</h3>${R.fails.map(f=>`<div class="find"><span class="sev bad"></span><span>${esc(f)}</span></div>`).join('')}</section>`;
   h+=`<section class="card"><h3>${t('priceH')}</h3>`;
   if(p){h+=`<div class="price"><div class="ln"><span>${t('marketShort')}</span><span>${tk(p.market)}</span></div>
@@ -955,12 +1135,17 @@ function vReport(){const R=compute(),c=S.car,p=R.price;
   h+=`<section class="card"><h3>${t('issues')}</h3>${issues.length?issues.map(i=>`<div class="issue"><div style="min-width:0"><span class="pill ${i.r==='major'?'bad':'warn'}">${i.sec==='panels'?t('fix'):t(i.r)}</span> ${esc(i.label)}${i.note?`<div class="small muted">${esc(i.note)}</div>`:''}</div><span class="num" style="white-space:nowrap">${i.cost?tk(i.cost):''}</span></div>`).join(''):`<p class="muted">${t('noIssues')}</p>`}
     ${R.repairs?`<div class="issue"><b>${t('repairs')}</b><b class="num">${tk(R.repairs)}</b></div>`:''}</section>`;
   if(isHyb()&&S.hybrid.health!=='')h+=`<section class="card"><h3>${t('hybridH')}</h3><dl class="kv"><dt>${t('health')}</dt><dd>${fmt(S.hybrid.health)}%</dd><dt>${t('weak')}</dt><dd>${S.hybrid.weak!==''?fmt(S.hybrid.weak):'—'}</dd></dl></section>`;
+  if(PH.length)h+=`<section class="card"><h3>${t('photosH')}</h3>${PCATS.filter(k=>PH.some(p=>p.cat===k)).map(k=>`<div class="phgroup"><span class="eyebrow">${esc(catName(k))}</span><div class="thumbs">${PH.filter(p=>p.cat===k).map(thumbHtml).join('')}</div></div>`).join('')}</section>`;
   h+=`<section class="card"><h3>${t('notes')}</h3><textarea id="f_notes" data-bind="notes">${esc(S.notes)}</textarea><p class="hint">${t('disclaimer')}</p></section>`;
   return h;}
 
 function vSaved(){const list=store.get('cc.list',[]);
   let h=`<section class="card"><div class="rephead"><h2>${t('savedH')}</h2><button class="btn primary" data-act="new">${t('newInsp')}</button></div><p class="hint">${t('storageNote')}</p>
     <div class="row"><button class="btn" data-act="export">${t('exportB')}</button><button class="btn" data-act="import">${t('importB')}</button></div></section>`;
+  const key=aiKey();
+  h+=`<section class="card">${chead('key',t('keyH'))}<p class="hint">${key?t('keyHas'):t('keySteps')}</p>
+    ${key?`<div class="row"><span class="pill good">${t('keySaved')} · …${esc(key.slice(-4))}</span><button class="btn danger" data-act="delkey">${t('keyDel')}</button></div>`
+      :`<div class="askrow"><input type="password" id="keyIn" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" aria-label="${t('keyLbl')}"><button class="btn primary" data-act="savekey">${t('keySave')}</button></div>`}</section>`;
   if(!list.length)return h+`<section class="card"><p class="muted">${t('emptySaved')}</p></section>`;
   return h+list.slice().sort((a,b)=>(b.savedAt||'').localeCompare(a.savedAt||'')).map(it=>{const m=MODEL_MAP[it.car.model];
     return `<section class="card saved"><div style="min-width:0"><b>${esc([it.car.year,m?m.name:''].filter(Boolean).join(' ')||'—')}</b>
@@ -984,7 +1169,22 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]
   if(a==='fuel'){S.car.fuel=v;save();render();return}
   if(a==='rate'){e.preventDefault();const c=S.checks[id]||{};c.r=c.r===v?'':v;S.checks[id]=c;save();updateItem(id);return}
   if(a==='color'){S.car.color=v;save();render();return}
-  if(a==='new'){recording=false;stopGps();S=blank();save();tab='car';store.set('cc.tab','car');render();window.scrollTo(0,0);return}
+  if(a==='allok'){e.preventDefault();const sec=SECTIONS.find(s=>s.k===v);sec.items.filter(itemOn).forEach(it=>{const c=S.checks[it[0]];if(!c||!c.r){S.checks[it[0]]=Object.assign(c||{},{r:'ok'});updateItem(it[0])}});save();return}
+  if(a==='new'){recording=false;stopGps();S=blank();save();tab='car';store.set('cc.tab','car');PH=[];render();window.scrollTo(0,0);loadPhotos();cleanOrphans();return}
+  if(a==='phcat'){phCat=v;render();return}
+  if(a==='addph'){phTarget={cat:v,item:id||''};const f=document.getElementById('photoFile');f.value='';f.click();return}
+  if(a==='viewph'){viewPhoto(id);return}
+  if(a==='closeView'){closeViewer();return}
+  if(a==='askDelPh'){document.getElementById('vact').innerHTML=`<button class="btn danger" data-act="delPh" data-id="${id}">${t('yes')}</button><button class="btn" data-act="closeView">${t('cancel')}</button>`;return}
+  if(a==='delPh'){const p=PH.find(x=>x.id===id);await DB.del(id).catch(()=>{});PH=PH.filter(x=>x.id!==id);if(TURL[id]){URL.revokeObjectURL(TURL[id]);delete TURL[id]}closeViewer();
+    if(p&&p.item&&tab==='check')updateItem(p.item);else render();return}
+  if(a==='aiVerdict'){askReport('verdict','',store.get('cc.aiph',true));return}
+  if(a==='aiAsk'){const q=(document.getElementById('aiQ')||{}).value||'';if(!q.trim())return;askReport('free',q.trim(),store.get('cc.aiph',true));return}
+  if(a==='aiph'){store.set('cc.aiph',b.checked);return}
+  if(a==='aiClear'){S.ai=[];save();render();return}
+  if(a==='askItem'){askItem(id);return}
+  if(a==='savekey'){const k=((document.getElementById('keyIn')||{}).value||'').trim();if(!k)return;if(!store.set('cc.key',k)){toast(t('phFail'));return}toast(t('keySaved'));render();return}
+  if(a==='delkey'){try{localStorage.removeItem('cc.key')}catch(err){}render();return}
   if(a==='demo'){link=new DemoLink();await link.connect();linkName='Demo';logLines=[];sup=null;acStage='ready';await initAdapter();render();return}
   if(a==='conn'){try{const l=new BleLink();await l.connect();link=l;linkName=l.name;sup=null;acStage='ready';l.onLost=()=>{link=null;recording=false;stopGps();toast(t('lost'));render()};logLines=[];render();await initAdapter();render()}
     catch(err){log('CONNECT',err.message);if(err.name!=='NotFoundError')toast(t('btFail'))}return}
@@ -998,19 +1198,23 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]
   if(a==='print'){window.print();return}
   if(a==='save'){const R=compute();const list=store.get('cc.list',[]).filter(x=>x.id!==S.id);const copy=JSON.parse(JSON.stringify(S));copy.savedAt=new Date().toISOString();copy.score=R.score;copy.verdict=R.verdict;
     if(copy.scan)copy.scan.samples=(copy.scan.samples||[]).slice(-300);list.push(copy);store.set('cc.list',list);save();toast(t('savedT'));return}
-  if(a==='openSaved'){const it=store.get('cc.list',[]).find(x=>x.id===id);if(it){S=migrate(JSON.parse(JSON.stringify(it)));save();tab='report';store.set('cc.tab','report');render();window.scrollTo(0,0)}return}
+  if(a==='openSaved'){const it=store.get('cc.list',[]).find(x=>x.id===id);if(it){S=migrate(JSON.parse(JSON.stringify(it)));save();tab='report';store.set('cc.tab','report');PH=[];render();window.scrollTo(0,0);loadPhotos()}return}
   if(a==='askDel'){document.getElementById('act_'+id).innerHTML=`<span class="small">${t('confirmDel')}</span><button class="btn danger" data-act="del" data-id="${id}">${t('yes')}</button><button class="btn" data-act="tab" data-v="saved">${t('cancel')}</button>`;return}
-  if(a==='del'){store.set('cc.list',store.get('cc.list',[]).filter(x=>x.id!==id));render();return}
-  if(a==='export'){const blob=new Blob([JSON.stringify({app:'car-check',v:2,list:store.get('cc.list',[])},null,1)],{type:'application/json'});
+  if(a==='del'){store.set('cc.list',store.get('cc.list',[]).filter(x=>x.id!==id));render();cleanOrphans();return}
+  if(a==='export'){const list=store.get('cc.list',[]);const photos=await exportPhotos(list.map(x=>x.id));
+    const blob=new Blob([JSON.stringify({app:'car-check',v:3,list,photos},null,1)],{type:'application/json'});
     const u=URL.createObjectURL(blob);const an=document.createElement('a');an.href=u;an.download='car-check-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(an);an.click();an.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);return}
   if(a==='import'){document.getElementById('importFile').click();return}
 });
 document.getElementById('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;
   try{const d=JSON.parse(await f.text());if(d.app!=='car-check'||!Array.isArray(d.list))throw 0;const list=store.get('cc.list',[]);const ids=new Set(list.map(x=>x.id));
-    d.list.forEach(x=>{if(!ids.has(x.id))list.push(migrate(x))});store.set('cc.list',list);toast(t('imported'));render()}catch(err){toast(t('importFail'))}e.target.value='';});
+    d.list.forEach(x=>{if(!ids.has(x.id))list.push(migrate(x))});store.set('cc.list',list);await importPhotos(d.photos);toast(t('imported'));render()}catch(err){toast(t('importFail'))}e.target.value='';});
+document.getElementById('photoFile').addEventListener('change',e=>{const files=[...e.target.files];if(phTarget&&files.length)addPhotos(files,phTarget.cat,phTarget.item);e.target.value='';});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('viewer').hidden)closeViewer();
+  if(e.key==='Enter'&&e.target.id==='aiQ'){e.preventDefault();document.querySelector('[data-act="aiAsk"]').click()}});
 let toastT;function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2200);}
 
-render();
+render();loadPhotos().then(cleanOrphans);
 </script>
 </body>
 </html>
