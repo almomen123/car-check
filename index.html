@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Car Check</title>
+<meta name="theme-color" content="#14202b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: phone-first inspection tool. Navy header band with overall progress, soft elevated cards, floating bottom dock. */
+:root{
+  --bg:#f1f3f8; --surface:#ffffff; --surface-2:#f5f7fb; --line:#e3e8f0; --line-2:#d3dbe7;
+  --fg:#0e1726; --muted:#66748a; --accent:#2f5bea; --accent-soft:#e8eeff; --accent-fg:#ffffff;
+  --band:#0f1b33; --band-2:#1b2d52; --band-fg:#f3f6fc; --band-muted:#a9b6cf; --gold:#d4b06a;
+  --good:#138a52; --good-bg:#e2f5ea; --warn:#b26b00; --warn-bg:#fdf1dc; --bad:#cf3434; --bad-bg:#fde8e8;
+  --shadow:0 1px 2px rgba(15,27,51,.05),0 6px 20px rgba(15,27,51,.06);
+  --font-body:"Inter","Hind Siliguri",system-ui,sans-serif;
+  --font-head:"Space Grotesk","Hind Siliguri",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,monospace;
+  --r:16px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#090e18; --surface:#111a29; --surface-2:#172235; --line:#202d43; --line-2:#2b3a55;
+  --fg:#e9eef7; --muted:#93a1b8; --accent:#6f93ff; --accent-soft:#1b2747; --accent-fg:#0a1020;
+  --band:#0b1324; --band-2:#16244a; --band-fg:#eef2fa; --band-muted:#98a6c2; --gold:#e0c084;
+  --good:#45c985; --good-bg:#12301f; --warn:#f0b54e; --warn-bg:#352812; --bad:#ff7a7a; --bad-bg:#3a1a1d;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#090e18; --surface:#111a29; --surface-2:#172235; --line:#202d43; --line-2:#2b3a55;
+  --fg:#e9eef7; --muted:#93a1b8; --accent:#6f93ff; --accent-soft:#1b2747; --accent-fg:#0a1020;
+  --band:#0b1324; --band-2:#16244a; --band-fg:#eef2fa; --band-muted:#98a6c2; --gold:#e0c084;
+  --good:#45c985; --good-bg:#12301f; --warn:#f0b54e; --warn-bg:#352812; --bad:#ff7a7a; --bad-bg:#3a1a1d;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--font-body);-webkit-text-size-adjust:100%}
+body.bn{font-family:"Hind Siliguri","Inter",system-ui,sans-serif}
+[hidden]{display:none!important}
+h1,h2,h3{font-family:var(--font-head);line-height:1.2;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:1.12rem} h3{font-size:1rem}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+
+/* header band */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--band);z-index:20}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:linear-gradient(135deg,var(--band),var(--band-2));color:var(--band-fg);
+  padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));display:grid;gap:10px;box-shadow:0 6px 20px rgba(9,14,24,.18)}
+.hrow{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto;width:100%}
+.brand{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
+.mark{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(212,176,106,.45);flex:none}
+.brand h1{font-size:1.05rem;letter-spacing:.01em}
+.brand .sub{font-size:.8rem;color:var(--band-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.langtog{display:flex;background:rgba(255,255,255,.08);border-radius:999px;padding:3px;flex:none}
+.langtog button{border:0;background:transparent;padding:5px 11px;font-size:.8rem;font-weight:700;color:var(--band-muted);border-radius:999px}
+.langtog button[aria-pressed="true"]{background:var(--band-fg);color:var(--band)}
+.prog{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--band-muted)}
+.prog .track{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+.prog .fillp{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#f3d79c);border-radius:3px;transition:width .3s}
+.prog b{color:var(--band-fg);font-variant-numeric:tabular-nums}
+
+main{max-width:720px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(110px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:grid;gap:14px}
+
+/* floating dock */
+nav.tabs{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:15;
+  max-width:560px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 30px rgba(15,27,51,.16);
+  display:grid;grid-template-columns:repeat(5,1fr);padding:6px}
+nav.tabs button{border:0;background:transparent;display:grid;justify-items:center;gap:2px;padding:7px 2px;color:var(--muted);font-size:.7rem;font-weight:600;border-radius:14px;transition:background .2s,color .2s}
+nav.tabs button svg{width:21px;height:21px}
+nav.tabs button[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+
+/* cards and fields */
+.card{background:var(--surface);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0;box-shadow:var(--shadow);border:1px solid var(--line)}
+.card.need{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft),var(--shadow)}
+.chead{display:flex;align-items:center;gap:10px}
+.chead .ic{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.chead .ic svg{width:19px;height:19px}
+.banner{background:var(--warn-bg);border-radius:var(--r);padding:12px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between;font-size:.9rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:460px){.grid2{grid-template-columns:1fr}}
+label.f{display:grid;gap:5px;font-size:.74rem;color:var(--muted);font-weight:600;letter-spacing:.02em;min-width:0}
+input[type=text],input[type=number],input[type=tel],input[type=url],select,textarea{
+  width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 13px;color:var(--fg);font-size:1rem;font-weight:500;transition:border-color .15s,background .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+textarea{min-height:90px;resize:vertical}
+.hint{font-size:.8rem;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line-2);background:var(--surface);border-radius:12px;padding:11px 16px;font-weight:600;font-size:.92rem;transition:transform .1s,background .15s}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 30%,transparent)}
+.btn.danger{color:var(--bad)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.check{display:flex;gap:10px;align-items:center;font-weight:500;font-size:.92rem}
+.check input{width:20px;height:20px;accent-color:var(--accent)}
+
+/* choice tiles (fuel, seller) and colour chips */
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
+.choice{border:1.5px solid var(--line);background:var(--surface-2);border-radius:14px;padding:12px 8px;display:grid;justify-items:center;gap:6px;font-weight:600;font-size:.84rem;text-align:center;transition:border-color .15s,background .15s}
+.choice svg{width:24px;height:24px;color:var(--muted)}
+.choice[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.choice[aria-pressed="true"] svg{color:var(--accent)}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.sw{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:var(--surface-2);border-radius:999px;padding:6px 12px 6px 6px;font-size:.84rem;font-weight:600}
+.sw i{width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.15);flex:none}
+.sw[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:.75rem;font-weight:700;white-space:nowrap}
+.pill.good{background:var(--good-bg);color:var(--good)} .pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.bad{background:var(--bad-bg);color:var(--bad)} .pill.info{background:var(--surface-2);color:var(--muted)}
+.tips{margin:0;padding-left:18px;display:grid;gap:5px;font-size:.9rem}
+
+/* checklist */
+details.sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+details.sec>summary{list-style:none;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec .ic{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+details.sec .ic svg{width:20px;height:20px}
+details.sec .st{display:grid;gap:6px;min-width:0}
+details.sec .st h2{font-size:.98rem}
+details.sec .mini{height:4px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+details.sec .mini span{display:block;height:100%;border-radius:2px;background:var(--accent);transition:width .3s}
+details.sec .chev{transition:transform .2s;color:var(--muted)}
+details.sec[open]>summary .chev{transform:rotate(180deg)}
+.sechint{padding:0 16px 12px;font-size:.8rem;color:var(--muted)}
+.items{display:grid;border-top:1px solid var(--line)}
+.item{padding:14px 16px;display:grid;gap:10px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .lbl{font-weight:500;font-size:.94rem}
+.crit{display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--bad);background:var(--bad-bg);border-radius:6px;padding:2px 6px;margin-left:8px;vertical-align:2px}
+.rate{display:flex;gap:6px;flex-wrap:wrap}
+.rate button{flex:1;min-width:66px;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--line);background:var(--surface-2);border-radius:11px;padding:8px 6px;font-size:.8rem;font-weight:700;color:var(--muted);transition:all .15s}
+.rate button svg{width:14px;height:14px}
+.rate button[aria-pressed="true"].ok{background:var(--good);border-color:var(--good);color:#fff}
+.rate button[aria-pressed="true"].minor{background:var(--warn);border-color:var(--warn);color:#fff}
+.rate button[aria-pressed="true"].major{background:var(--bad);border-color:var(--bad);color:#fff}
+.rate button[aria-pressed="true"].na{background:var(--muted);border-color:var(--muted);color:var(--surface)}
+.item .extra{display:grid;grid-template-columns:150px 1fr;gap:8px}
+@media (max-width:420px){.item .extra{grid-template-columns:1fr}}
+.item.two{grid-template-columns:1fr auto;align-items:center}
+.item.two .rate{min-width:200px}
+.item.two .extra{grid-column:1/-1}
+
+/* scan */
+.kv{display:grid;grid-template-columns:1fr auto;gap:10px 12px;align-items:center;margin:0}
+.kv dt{color:var(--muted);font-size:.88rem} .kv dd{margin:0;text-align:right;font-weight:600}
+.codes{display:grid;gap:8px}
+.code{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start;background:var(--surface-2);border-radius:12px;padding:10px 12px}
+.code .c{font-family:var(--font-mono);font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.tile{background:var(--surface-2);border-radius:12px;padding:11px 12px;display:grid;gap:2px}
+.tile .v{font-family:var(--font-mono);font-size:1.3rem;font-weight:600}
+.tile .k{font-size:.72rem;color:var(--muted);font-weight:600}
+.sens{width:100%;border-collapse:collapse;font-size:.88rem}
+.sens td{padding:8px 0;border-bottom:1px solid var(--line)}
+.sens td+td{text-align:right;font-family:var(--font-mono);white-space:nowrap;padding-left:12px}
+.cyl{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.find{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line)}
+.find:last-child{border-bottom:0}
+.sev{width:10px;height:10px;border-radius:50%;margin-top:7px}
+.sev.good{background:var(--good)} .sev.warn{background:var(--warn)} .sev.bad{background:var(--bad)} .sev.info{background:var(--muted)}
+pre.log{margin:0;max-height:220px;overflow:auto;background:var(--surface-2);border-radius:12px;padding:10px;font:12px/1.45 var(--font-mono);white-space:pre-wrap;word-break:break-all}
+.status{display:flex;gap:10px;align-items:center}
+.led{width:10px;height:10px;border-radius:50%;background:var(--line-2)}
+.led.on{background:var(--good);box-shadow:0 0 0 4px var(--good-bg)}
+.step{background:var(--accent-soft);color:var(--accent);border-radius:12px;padding:12px;font-weight:600}
+
+/* report */
+.herocard{background:linear-gradient(135deg,var(--band),var(--band-2));color:var(--band-fg);border:0}
+.herocard .muted,.herocard .small{color:var(--band-muted)}
+.hero{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.gauge{width:116px;height:116px}
+.verdict{font-family:var(--font-head);font-size:1.3rem;font-weight:700}
+.bars{display:grid;gap:9px}
+.bar{display:grid;grid-template-columns:minmax(0,150px) 1fr 40px;gap:10px;align-items:center;font-size:.86rem}
+.bar .track{height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.bar .fill{display:block;height:100%;border-radius:4px}
+.price{display:grid;gap:7px}
+.price .ln{display:flex;justify-content:space-between;gap:12px;font-variant-numeric:tabular-nums}
+.price .ln span:last-child{white-space:nowrap}
+.price .ln.total{border-top:1px solid var(--line);padding-top:9px;font-weight:700}
+.callout{border-radius:12px;padding:12px 14px;font-weight:600}
+.callout.good{background:var(--good-bg);color:var(--good)} .callout.bad{background:var(--bad-bg);color:var(--bad)} .callout.warn{background:var(--warn-bg);color:var(--warn)}
+.issue{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.issue:last-child{border-bottom:0}
+.rephead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.herocard .btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:var(--band-fg)}
+.herocard .btn.primary{background:var(--band-fg);border-color:var(--band-fg);color:var(--band);box-shadow:none}
+.saved{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:9px 18px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:30;box-shadow:var(--shadow)}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media print{
+  header.top,nav.tabs,.no-print,body::before,.toast{display:none!important}
+  body{background:#fff;color:#000}
+  main{padding:0;max-width:none}
+  .card,details.sec{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
+  .herocard{background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hrow">
+    <div class="brand">
+      <span class="mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4b06a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15l1.8-5.2c.3-.9 1.2-1.5 2.1-1.5h8.2c.9 0 1.8.6 2.1 1.5L20 15v3.5h-2.4v-1.6H6.4v1.6H4z"/><path d="M9 12.5l2 2 4-4"/></svg></span>
+      <div style="min-width:0"><h1>Car Check</h1><div class="sub" id="carSub"></div></div>
+    </div>
+    <div class="langtog" role="group" aria-label="Language">
+      <button id="langEn" data-act="lang" data-v="en">EN</button>
+      <button id="langBn" data-act="lang" data-v="bn">বাং</button>
+    </div>
+  </div>
+  <div class="hrow prog" id="prog"></div>
+</header>
+<main id="main"></main>
+<nav class="tabs" id="tabs"></nav>
+<div class="toast" id="toast" hidden></div>
+<input type="file" id="importFile" accept="application/json" hidden>
+
+<script>
+'use strict';
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
+let L=store.get('cc.lang','en');
+
+const T={
+en:{car:'Car',scan:'Scan',check:'Checklist',report:'Report',saved:'Saved',
+ sample:'This is an example inspection filled with demo data.',newInsp:'Start new inspection',
+ fuelH:'Fuel type',fuelHint:'Choose this first. It decides which checks you see.',petrol:'Petrol',cng:'Petrol + CNG',lpg:'Petrol + LPG',hybrid:'Hybrid',diesel:'Diesel',
+ carH:'Car details',model:'Model',selectModel:'Choose model',year:'Year',km:'Odometer (km)',chassis:'Chassis number',regNo:'Registration number',color:'Colour',grade:'Auction grade',location:'Location',
+ sellerH:'Seller',seller:'Seller name',phone:'Seller phone',link:'Listing link',sellerType:'Seller type',owner:'Owner',broker:'Broker',unsure:'Not sure',
+ priceH:'Price',asking:'Asking price (৳)',market:'Market price of a clean one (৳)',marketShort:'Market price',marketHint:'What a clean car of the same model and year usually sells for. Compare 5–10 listings.',
+ profit:'Target profit (৳)',papersCost:'Papers and transfer (৳)',adsCost:'Ads and detailing (৳)',inspector:'Inspected by / business name',otherColor:'Type the colour',progLbl:'checked',scoreLbl:'Score',watch:'Watch for on this model',
+ connect:'Connect scanner',demo:'Use demo scanner',disconnect:'Disconnect',fullScan:'Run full scan',scanning:'Scanning…',
+ scanHint:'Plug the scanner into the OBD port under the dashboard. Start the engine, then connect.',
+ noBt:'Bluetooth is not available here. Open this app in Chrome on an Android phone, from an https link.',
+ connectedTo:'Connected:',demoMode:'Demo scanner (fake data)',notConnected:'Not connected',lastScan:'Last scan',
+ mil:'Check engine light',on:'ON',off:'OFF',stored:'Stored codes',pending:'Pending codes',permanent:'Permanent codes',none:'None',
+ distCleared:'Distance since codes cleared',timeCleared:'Engine time since cleared',warmups:'Warm-ups since cleared',distMil:'Distance with light on',
+ odoEcu:'Odometer in engine computer',odoNone:'Not reported by this car',
+ monitors:'Readiness monitors',complete:'complete',vin:'VIN',vinNone:'Not reported. Normal on many Japan-market cars; check the chassis plate.',
+ live:'Live data and test drive',startRec:'Start recording',stopRec:'Stop recording',samples:'samples',useGps:'Use phone GPS for the speedometer check',
+ sensorsH:'All sensors',sensorsHint:'Every sensor this car reports. Updates while recording.',
+ findings:'What the scan says',log:'Scanner log',copyLog:'Copy log',copied:'Copied',noScan:'No scan yet. Connect the scanner and run a full scan.',
+ cylH:'Combustion per cylinder',cylHint:'Misfire counts for each cylinder. Run with the engine warm and idling.',cylRun:'Run cylinder test',cylNone:'This car does not report misfire per cylinder.',cyl:'Cyl',
+ acH:'AC load test',acHint:'Compares idle with the AC off and on. Engine warm, car parked.',acStart:'AC is OFF — start',acNext:'AC is ON (max cool) — continue',acWaitOff:'Turn the AC OFF and keep idling.',acWaitOn:'Now turn the AC ON at max cool.',acRun:'Measuring…',acOff:'AC off',acOn:'AC on',acAgain:'Run again',
+ v2H:'Coming in the next version',v2:'Injector values, gear position, gearbox oil temperature and radiator fan speed need Toyota and Honda commands. I will add them after one real-car scan log. Cylinder pressure needs a compression gauge; record it in the Mechanic section.',
+ hybridH:'Hybrid battery',hybridHint:'Until the built-in hybrid reader is ready, enter the battery health from Car Scanner or Hybrid Assistant.',health:'Battery health (%)',weak:'Weak blocks',
+ rpm:'RPM',spd:'Speed km/h',ect:'Coolant °C',stft:'Short trim %',ltft:'Long trim %',volt:'Voltage V',load:'Load %',maf:'MAF g/s',ratio:'RPM per km/h',gps:'GPS km/h',
+ ok:'OK',minor:'Minor',major:'Major',na:'N/A',fix:'Needs work',cost:'Repair cost (৳)',note:'Note',mustPass:'Must pass',done:'done',
+ panelHint:'Most older cars have some repaint. Mark a panel only if it needs work, and add the cost.',
+ score:'Score',excellent:'Strong buy',good:'Good — negotiate',risky:'Risky — only with a big discount',skip:'Skip this car',reject:'Do not buy',incomplete:'Inspection not finished',
+ hardFails:'Deal breakers',repairs:'Repairs needed',maxBuy:'Maximum buying price',fair:'Fair value today',askingP:'Asking price',offer:'Offer up to',
+ goodDeal:'The asking price is within our limit.',overBy:'Asking price is over our limit by',needMarket:'Enter the market price on the Car tab to see the price check.',
+ issues:'Problems found',noIssues:'No problems marked yet.',sections:'Section scores',notes:'Notes',print:'Save as PDF',save:'Save inspection',savedT:'Saved',
+ reportTitle:'Car inspection report',date:'Date',checked:'checked',disclaimer:'This report shows the car\'s condition on the inspection date. Scanner checks cover what the car\'s computer reports.',
+ savedH:'Saved inspections',open:'Open',del:'Delete',confirmDel:'Delete for good?',yes:'Yes, delete',cancel:'Cancel',exportB:'Export backup',importB:'Import backup',
+ emptySaved:'No saved inspections yet. Finish one and tap Save on the Report tab.',storageNote:'Inspections are stored on this phone only. Export a backup now and then.',
+ imported:'Imported',importFail:'That file is not a Car Check backup.',current:'Open now',km_u:'km',min_u:'min',feeLine:'Papers, ads and detailing',profitLine:'Our profit',
+ btFail:'Could not connect. Make sure the scanner is plugged in, the ignition is on, and Bluetooth is on.',lost:'Scanner disconnected.',gpsFail:'GPS is off or not allowed.',
+ sec_papers:'Papers',sec_frame:'Frame and accident check',sec_panels:'Body panels',sec_glass:'Glass and lights',sec_flood:'Flood signs',sec_engine:'Engine bay',sec_under:'Under the car',
+ sec_tyres:'Wheels, tyres and tools',sec_interior:'Interior, switches and doors',sec_gas:'CNG / LPG kit',sec_drive:'Test drive',sec_mechanic:'Mechanic',sec_scan:'Scanner',sec_hybrid:'Hybrid battery'},
+bn:{car:'গাড়ি',scan:'স্ক্যান',check:'চেকলিস্ট',report:'রিপোর্ট',saved:'সংরক্ষিত',
+ sample:'এটি ডেমো ডেটা দিয়ে পূরণ করা একটি উদাহরণ পরিদর্শন।',newInsp:'নতুন পরিদর্শন শুরু করুন',
+ fuelH:'জ্বালানির ধরন',fuelHint:'প্রথমে এটি বেছে নিন। এর ওপর নির্ভর করে কোন চেক দেখাবে।',petrol:'পেট্রোল',cng:'পেট্রোল + সিএনজি',lpg:'পেট্রোল + এলপিজি',hybrid:'হাইব্রিড',diesel:'ডিজেল',
+ carH:'গাড়ির তথ্য',model:'মডেল',selectModel:'মডেল বেছে নিন',year:'সাল',km:'মাইলেজ (কিমি)',chassis:'চেসিস নম্বর',regNo:'রেজিস্ট্রেশন নম্বর',color:'রং',grade:'অকশন গ্রেড',location:'লোকেশন',
+ sellerH:'বিক্রেতা',seller:'বিক্রেতার নাম',phone:'বিক্রেতার ফোন',link:'বিজ্ঞাপনের লিংক',sellerType:'বিক্রেতার ধরন',owner:'মালিক',broker:'দালাল',unsure:'নিশ্চিত নই',
+ priceH:'দাম',asking:'চাওয়া দাম (৳)',market:'ভালো অবস্থার একই গাড়ির বাজারদর (৳)',marketShort:'বাজারদর',marketHint:'একই মডেল ও সালের পরিষ্কার গাড়ি সাধারণত যে দামে বিক্রি হয়। ৫–১০টি বিজ্ঞাপন মিলিয়ে দেখুন।',
+ profit:'লক্ষ্য লাভ (৳)',papersCost:'কাগজ ও ট্রান্সফার খরচ (৳)',adsCost:'বিজ্ঞাপন ও ডিটেইলিং (৳)',inspector:'পরিদর্শক / ব্যবসার নাম',otherColor:'রং লিখুন',progLbl:'চেক করা হয়েছে',scoreLbl:'স্কোর',watch:'এই মডেলে যা খেয়াল করবেন',
+ connect:'স্ক্যানার কানেক্ট করুন',demo:'ডেমো স্ক্যানার ব্যবহার করুন',disconnect:'ডিসকানেক্ট',fullScan:'ফুল স্ক্যান চালান',scanning:'স্ক্যান হচ্ছে…',
+ scanHint:'ড্যাশবোর্ডের নিচের OBD পোর্টে স্ক্যানার লাগান। ইঞ্জিন চালু করে তারপর কানেক্ট করুন।',
+ noBt:'এখানে ব্লুটুথ পাওয়া যাচ্ছে না। অ্যান্ড্রয়েড ফোনের Chrome-এ https লিংক থেকে অ্যাপটি খুলুন।',
+ connectedTo:'কানেক্টেড:',demoMode:'ডেমো স্ক্যানার (নকল ডেটা)',notConnected:'কানেক্ট করা নেই',lastScan:'শেষ স্ক্যান',
+ mil:'চেক ইঞ্জিন লাইট',on:'জ্বলছে',off:'নেভানো',stored:'স্টোর করা কোড',pending:'পেন্ডিং কোড',permanent:'স্থায়ী কোড',none:'নেই',
+ distCleared:'কোড মোছার পর চলেছে',timeCleared:'কোড মোছার পর ইঞ্জিন চলেছে',warmups:'কোড মোছার পর ওয়ার্ম-আপ',distMil:'লাইট জ্বলা অবস্থায় চলেছে',
+ odoEcu:'ইঞ্জিন কম্পিউটারে ওডোমিটার',odoNone:'এই গাড়ি জানায় না',
+ monitors:'রেডিনেস মনিটর',complete:'সম্পূর্ণ',vin:'ভিআইএন',vinNone:'পাওয়া যায়নি। অনেক জাপানি গাড়িতে এটা স্বাভাবিক; চেসিস প্লেট দেখুন।',
+ live:'লাইভ ডেটা ও টেস্ট ড্রাইভ',startRec:'রেকর্ডিং শুরু',stopRec:'রেকর্ডিং বন্ধ',samples:'স্যাম্পল',useGps:'স্পিডোমিটার যাচাইয়ে ফোনের জিপিএস ব্যবহার করুন',
+ sensorsH:'সব সেন্সর',sensorsHint:'এই গাড়ি যত সেন্সরের তথ্য দেয়। রেকর্ডিংয়ের সময় আপডেট হয়।',
+ findings:'স্ক্যান যা বলছে',log:'স্ক্যানার লগ',copyLog:'লগ কপি করুন',copied:'কপি হয়েছে',noScan:'এখনো স্ক্যান হয়নি। স্ক্যানার কানেক্ট করে ফুল স্ক্যান চালান।',
+ cylH:'প্রতিটি সিলিন্ডারের দহন',cylHint:'প্রতিটি সিলিন্ডারের মিসফায়ার সংখ্যা। ইঞ্জিন গরম ও আইডলে রেখে চালান।',cylRun:'সিলিন্ডার টেস্ট চালান',cylNone:'এই গাড়ি সিলিন্ডারভিত্তিক মিসফায়ার জানায় না।',cyl:'সিলি.',
+ acH:'এসি লোড টেস্ট',acHint:'এসি বন্ধ ও চালু অবস্থায় আইডল তুলনা করে। ইঞ্জিন গরম, গাড়ি দাঁড়ানো।',acStart:'এসি বন্ধ — শুরু',acNext:'এসি চালু (সর্বোচ্চ ঠান্ডা) — চালিয়ে যান',acWaitOff:'এসি বন্ধ করে আইডলে রাখুন।',acWaitOn:'এখন এসি সর্বোচ্চ ঠান্ডায় চালু করুন।',acRun:'মাপা হচ্ছে…',acOff:'এসি বন্ধ',acOn:'এসি চালু',acAgain:'আবার চালান',
+ v2H:'পরের ভার্সনে আসছে',v2:'ইনজেক্টর ভ্যালু, গিয়ার পজিশন, গিয়ার অয়েলের তাপমাত্রা ও রেডিয়েটর ফ্যানের গতির জন্য টয়োটা ও হোন্ডার নিজস্ব কমান্ড লাগে। একটি আসল গাড়ির স্ক্যান লগ পেলে এগুলো যোগ করব। সিলিন্ডার প্রেশার মাপতে কমপ্রেশন গেজ লাগে; মেকানিক অংশে লিখুন।',
+ hybridH:'হাইব্রিড ব্যাটারি',hybridHint:'বিল্ট-ইন হাইব্রিড রিডার তৈরি না হওয়া পর্যন্ত Car Scanner বা Hybrid Assistant থেকে ব্যাটারি হেলথ লিখুন।',health:'ব্যাটারি হেলথ (%)',weak:'দুর্বল ব্লক',
+ rpm:'আরপিএম',spd:'গতি কিমি/ঘ',ect:'কুল্যান্ট °C',stft:'শর্ট ট্রিম %',ltft:'লং ট্রিম %',volt:'ভোল্টেজ V',load:'লোড %',maf:'MAF g/s',ratio:'আরপিএম/কিমি',gps:'জিপিএস কিমি/ঘ',
+ ok:'ঠিক',minor:'ছোট',major:'বড়',na:'নেই',fix:'কাজ লাগবে',cost:'মেরামত খরচ (৳)',note:'নোট',mustPass:'অবশ্যই পাস',done:'সম্পন্ন',
+ panelHint:'বেশিরভাগ পুরনো গাড়িতে কিছু রিপেইন্ট থাকে। শুধু যে প্যানেলে কাজ লাগবে সেটি চিহ্নিত করে খরচ লিখুন।',
+ score:'স্কোর',excellent:'কেনার মতো',good:'ভালো — দরদাম করুন',risky:'ঝুঁকিপূর্ণ — বড় ছাড় পেলে',skip:'এই গাড়ি বাদ দিন',reject:'কিনবেন না',incomplete:'পরিদর্শন শেষ হয়নি',
+ hardFails:'যে কারণে কেনা যাবে না',repairs:'মেরামত খরচ',maxBuy:'সর্বোচ্চ কেনার দাম',fair:'আজকের ন্যায্য দাম',askingP:'চাওয়া দাম',offer:'সর্বোচ্চ অফার',
+ goodDeal:'চাওয়া দাম আমাদের সীমার মধ্যে।',overBy:'চাওয়া দাম আমাদের সীমার চেয়ে বেশি:',needMarket:'দাম যাচাই দেখতে গাড়ি ট্যাবে বাজারদর লিখুন।',
+ issues:'পাওয়া সমস্যা',noIssues:'এখনো কোনো সমস্যা চিহ্নিত হয়নি।',sections:'বিভাগভিত্তিক স্কোর',notes:'নোট',print:'পিডিএফ সেভ করুন',save:'পরিদর্শন সেভ করুন',savedT:'সেভ হয়েছে',
+ reportTitle:'গাড়ি পরিদর্শন রিপোর্ট',date:'তারিখ',checked:'চেক করা হয়েছে',disclaimer:'এই রিপোর্ট পরিদর্শনের দিনের অবস্থা দেখায়। স্ক্যানার শুধু গাড়ির কম্পিউটার যা জানায় তা দেখায়।',
+ savedH:'সংরক্ষিত পরিদর্শন',open:'খুলুন',del:'মুছুন',confirmDel:'স্থায়ীভাবে মুছবেন?',yes:'হ্যাঁ, মুছুন',cancel:'বাতিল',exportB:'ব্যাকআপ এক্সপোর্ট',importB:'ব্যাকআপ ইমপোর্ট',
+ emptySaved:'এখনো কোনো পরিদর্শন সেভ করা নেই। একটি শেষ করে রিপোর্ট ট্যাবে সেভ চাপুন।',storageNote:'পরিদর্শনগুলো শুধু এই ফোনে থাকে। মাঝে মাঝে ব্যাকআপ এক্সপোর্ট করুন।',
+ imported:'ইমপোর্ট হয়েছে',importFail:'এটি Car Check ব্যাকআপ ফাইল নয়।',current:'এখন খোলা',km_u:'কিমি',min_u:'মিনিট',feeLine:'কাগজ, বিজ্ঞাপন ও ডিটেইলিং',profitLine:'আমাদের লাভ',
+ btFail:'কানেক্ট হয়নি। স্ক্যানার লাগানো আছে, চাবি অন আছে আর ব্লুটুথ চালু আছে কিনা দেখুন।',lost:'স্ক্যানার ডিসকানেক্ট হয়ে গেছে।',gpsFail:'জিপিএস বন্ধ বা অনুমতি নেই।',
+ sec_papers:'কাগজপত্র',sec_frame:'ফ্রেম ও দুর্ঘটনা যাচাই',sec_panels:'বডি প্যানেল',sec_glass:'কাচ ও লাইট',sec_flood:'বন্যার চিহ্ন',sec_engine:'ইঞ্জিন',sec_under:'গাড়ির নিচে',
+ sec_tyres:'চাকা, টায়ার ও টুলস',sec_interior:'ভেতর, সুইচ ও দরজা',sec_gas:'সিএনজি / এলপিজি কিট',sec_drive:'টেস্ট ড্রাইভ',sec_mechanic:'মেকানিক',sec_scan:'স্ক্যানার',sec_hybrid:'হাইব্রিড ব্যাটারি'}
+};
+const t=k=>(T[L]&&T[L][k]!=null?T[L][k]:(T.en[k]!=null?T.en[k]:k));
+const tx=o=>o?(o[L]||o.en):'';
+const nf=()=>new Intl.NumberFormat(L==='bn'?'bn-BD':'en-IN');
+const fmt=n=>(n==null||n===''||isNaN(n))?'—':nf().format(Math.round(n));
+const tk=n=>(n==null||n===''||isNaN(n))?'—':'৳ '+fmt(n);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const bi=(en,bn)=>L==='bn'?bn:en;
+
+/* ---------- models ---------- */
+const MODELS=[
+ {g:'Toyota',list:[['axio','Axio','cvt'],['axio_h','Axio Hybrid','thyb'],['fielder','Fielder','cvt'],['fielder_h','Fielder Hybrid','thyb'],['allion','Allion','cvt'],['premio','Premio','cvt'],
+   ['corolla_x','Corolla X / G (older)','oldauto'],['aqua','Aqua','thyb'],['prius','Prius','prius'],['toyota_other','Other Toyota','gen']]},
+ {g:'Honda',list:[['vezel','Vezel','hcvt'],['vezel_h','Vezel Hybrid','hhyb'],['grace_h','Grace Hybrid','hhyb'],['fit','Fit','hcvt'],['fit_h','Fit Hybrid','hhyb'],['honda_other','Other Honda','gen']]},
+ {g:'Mitsubishi',list:[['lancer','Lancer','mit'],['rvr','RVR / Outlander','mit'],['mit_other','Other Mitsubishi','mit']]},
+ {g:'Other',list:[['other','Other make','gen']]}
+];
+const MODEL_MAP={};MODELS.forEach(g=>g.list.forEach(m=>MODEL_MAP[m[0]]={name:m[1],tip:m[2],hybrid:/thyb|hhyb|prius/.test(m[2])}));
+const TIPS={
+ cvt:[['CVT judder or whining on slow acceleration','ধীরে এক্সেলারেট করলে সিভিটি ঝাঁকুনি বা শোঁ শোঁ শব্দ'],['Water pump leaks (pink crust near the pump)','ওয়াটার পাম্প লিক (পাম্পের পাশে গোলাপি দাগ)'],['Oil use on some engines: check level and blue smoke','কিছু ইঞ্জিনে তেল খায়: লেভেল ও নীল ধোঁয়া দেখুন']],
+ thyb:[['Hybrid battery health and weak blocks','হাইব্রিড ব্যাটারির হেলথ ও দুর্বল ব্লক'],['Hybrid battery cooling fan and filter clogged with dust','হাইব্রিড ব্যাটারির কুলিং ফ্যান ও ফিল্টারে ধুলা জমা'],['Inverter coolant pump running (listen with ignition ON)','ইনভার্টার কুল্যান্ট পাম্প চলছে কিনা (চাবি অন করে শুনুন)'],['Brake actuator buzzing or brake warning light','ব্রেক অ্যাকচুয়েটরের শব্দ বা ব্রেক ওয়ার্নিং লাইট']],
+ prius:[['Hybrid battery health and weak blocks','হাইব্রিড ব্যাটারির হেলথ ও দুর্বল ব্লক'],['Coolant loss or misfire codes (EGR cooler / head gasket on 3rd gen)','কুল্যান্ট কমে যাওয়া বা মিসফায়ার কোড (৩য় জেনে ইজিআর কুলার / হেড গ্যাসকেট)'],['Inverter coolant pump running','ইনভার্টার কুল্যান্ট পাম্প চলছে কিনা'],['Battery cooling fan clogged','ব্যাটারি কুলিং ফ্যানে ধুলা জমা']],
+ oldauto:[['Harsh or late gear shifts in the 4-speed auto','৪-স্পিড অটো গিয়ারে ঝাঁকি দিয়ে বা দেরিতে গিয়ার বদল'],['Engine oil use and blue smoke','ইঞ্জিন তেল খাওয়া ও নীল ধোঁয়া'],['Underbody rust on older cars','পুরনো গাড়িতে নিচের দিকে মরিচা']],
+ hhyb:[['i-DCD gearbox: jerky low-speed shifts or judder','আই-ডিসিডি গিয়ারবক্স: কম গতিতে ঝাঁকুনি'],['Ask if gearbox software updates or recalls were done','গিয়ারবক্স সফটওয়্যার আপডেট বা রিকল করা হয়েছে কিনা জিজ্ঞেস করুন'],['Hybrid battery health','হাইব্রিড ব্যাটারির হেলথ'],['AC compressor cooling well','এসি কম্প্রেসর ভালো ঠান্ডা করছে কিনা']],
+ hcvt:[['CVT judder on slow acceleration','ধীরে এক্সেলারেট করলে সিভিটি ঝাঁকুনি'],['AC compressor cooling well','এসি কম্প্রেসর ভালো ঠান্ডা করছে কিনা']],
+ mit:[['CVT whine or overheating on long drives','লম্বা ড্রাইভে সিভিটি শব্দ বা গরম হওয়া'],['Service history and parts availability','সার্ভিস হিস্ট্রি ও পার্টস পাওয়া যায় কিনা']],
+ gen:[['Gearbox shifts, engine smoke, and service history','গিয়ার বদল, ইঞ্জিনের ধোঁয়া ও সার্ভিস হিস্ট্রি']]
+};
+const FUELS=['petrol','cng','lpg','hybrid','diesel'];
+const COLORS=[['white','White','সাদা','#f6f6f3'],['pearl','Pearl white','পার্ল হোয়াইট','#ece6d8'],['silver','Silver','সিলভার','#c4c9cf'],['grey','Grey','ধূসর','#6d737b'],
+ ['black','Black','কালো','#15171a'],['blue','Blue','নীল','#24477f'],['red','Red','লাল','#b3202a'],['wine','Wine red','ওয়াইন রেড','#5e1a24'],
+ ['brown','Brown','বাদামি','#5a4030'],['gold','Gold / beige','গোল্ড / বেইজ','#c8b48a'],['green','Green','সবুজ','#2f5a3c'],['other','Other','অন্যান্য','conic-gradient(#e44,#fc3,#3c6,#39f,#a4f,#e44)']];
+const colorName=c=>{if(!c.color)return'';if(c.color==='other')return c.colorOther||'';const x=COLORS.find(k=>k[0]===c.color);return x?bi(x[1],x[2]):c.color};
+const SI={ /* section and fuel icons, 24px stroke */
+ papers:'<path d="M7 3h7l4 4v14H7z"/><path d="M13 3v5h5M10 12h5M10 16h5"/>',
+ frame:'<path d="M4 8h16M4 16h16M7 8v8M17 8v8M4 8l3-3M20 8l-3-3M4 16l3 3M20 16l-3 3"/>',
+ panels:'<path d="M3 15l2-5.5C5.4 8.6 6.3 8 7.3 8h9.4c1 0 1.9.6 2.3 1.5L21 15v3h-2.5v-1.5h-13V18H3z"/><path d="M8 8l1 7M16 8l-1 7"/>',
+ glass:'<path d="M9 5a7 7 0 000 14h3V5z"/><path d="M15 8h5M15 12h6M15 16h5"/>',
+ flood:'<path d="M3 15c2 0 2-1.5 4.5-1.5S10 15 12 15s2-1.5 4.5-1.5S19 15 21 15M3 19c2 0 2-1.5 4.5-1.5S10 19 12 19s2-1.5 4.5-1.5S19 19 21 19"/><path d="M12 3s-3.5 4-3.5 6.5a3.5 3.5 0 007 0C15.5 7 12 3 12 3z"/>',
+ engine:'<path d="M5 9h2V7h6v2h3l2 2h2v6h-2l-2 2H8l-3-3z"/><path d="M3 11v4M10 7V5h4"/>',
+ under:'<path d="M14.5 5.5a4 4 0 00-5 5L4 16l4 4 5.5-5.5a4 4 0 005-5l-2.5 2.5-2.5-.5-.5-2.5z"/>',
+ tyres:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 3.5V9M12 15v5.5M3.5 12H9M15 12h5.5"/>',
+ interior:'<path d="M8 4h5l1 9H8z"/><path d="M6 13h10l1.5 4H6zM8 17v3M15 17v3"/>',
+ gas:'<rect x="7" y="6" width="10" height="15" rx="4"/><path d="M10 6V3h4v3M12 11v5"/>',
+ drive:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.2"/><path d="M4 11h6M14 11h6M12 14.5V20.5"/>',
+ mechanic:'<circle cx="9" cy="8" r="3.5"/><path d="M3 20c.5-3.5 3-5.5 6-5.5 1.5 0 2.8.4 3.8 1.2M16.5 13.5l4 4-2 2-4-4a3 3 0 01-3.5-4l1.5 1.5 1.5-.5.5-1.5L13 9.5a3 3 0 013.5 4z"/>',
+ petrol:'<path d="M12 3s-5 6-5 10a5 5 0 0010 0c0-4-5-10-5-10z"/>',
+ cng:'<rect x="7" y="6" width="10" height="15" rx="4"/><path d="M10 6V3h4v3"/>',
+ lpg:'<rect x="6" y="7" width="12" height="14" rx="5"/><path d="M10 7V4h4v3M12 12c-1 1.2-1.5 2-1.5 2.8a1.5 1.5 0 003 0c0-.8-.5-1.6-1.5-2.8z"/>',
+ hybrid:'<path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M12 8l-2 4h3l-2 4"/>',
+ diesel:'<path d="M12 3s-5 6-5 10a5 5 0 0010 0c0-4-5-10-5-10z"/><path d="M10.5 11v5h1.3a2.5 2.5 0 000-5z"/>',
+ car:'<path d="M4 15l1.8-5.2c.3-.9 1.2-1.5 2.1-1.5h8.2c.9 0 1.8.6 2.1 1.5L20 15v3.5h-2.4v-1.6H6.4v1.6H4z"/>',
+ seller:'<circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6 8-6s7.2 2 8 6"/>',
+ price:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>'};
+const svg=(k,s)=>`<svg viewBox="0 0 24 24" ${s?`width="${s}" height="${s}"`:''} fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${SI[k]||''}</svg>`;
+const RICON={ok:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',minor:'<path d="M12 6v8M12 18v.5"/>',major:'<path d="M6 6l12 12M18 6L6 18"/>',na:'<path d="M6 12h12"/>'};
+const rsvg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">${RICON[k]}</svg>`;
+const isHyb=()=>S.car.fuel==='hybrid',isGas=()=>S.car.fuel==='cng'||S.car.fuel==='lpg';
+
+/* ---------- checklist: [id, mustPass, en, bn, condition] ---------- */
+const SECTIONS=[
+ {k:'papers',w:14,items:[
+  ['p1',1,'Registration owner name matches the seller\'s NID','রেজিস্ট্রেশনে মালিকের নাম বিক্রেতার এনআইডির সাথে মিলে'],
+  ['p2',1,'Checked online with BRTA, details match','বিআরটিএ অনলাইনে যাচাই করা হয়েছে, তথ্য মিলেছে'],
+  ['p3',1,'Chassis number on the body matches the papers, no tampering','বডির চেসিস নম্বর কাগজের সাথে মিলে, কোনো ঘষামাজা নেই'],
+  ['p4',1,'Engine number matches the papers','ইঞ্জিন নম্বর কাগজের সাথে মিলে'],
+  ['p5',1,'No bank loan, or the bank NOC is available','ব্যাংক লোন নেই, অথবা ব্যাংকের এনওসি আছে'],
+  ['p6',0,'Tax token valid','ট্যাক্স টোকেনের মেয়াদ আছে'],
+  ['p7',0,'Fitness certificate valid','ফিটনেস সার্টিফিকেটের মেয়াদ আছে'],
+  ['p8',0,'Insurance valid','ইন্স্যুরেন্সের মেয়াদ আছে'],
+  ['p9',0,'No unpaid fines or cases','কোনো বকেয়া জরিমানা বা মামলা নেই'],
+  ['p10',0,'Seller is the real owner, not a broker','বিক্রেতা আসল মালিক, দালাল নয়']]},
+ {k:'frame',w:14,items:[
+  ['fr1',1,'Chassis rails straight, no welding or cuts','চেসিস রেল সোজা, ওয়েল্ডিং বা কাটা নেই'],
+  ['fr2',1,'Engine bay frame straight: radiator support, inner fenders and aprons not repaired','ইঞ্জিন বে ফ্রেম সোজা: রেডিয়েটর সাপোর্ট, ইনার ফেন্ডার ও এপ্রনে মেরামত নেই'],
+  ['fr3',1,'Factory chassis sealer beads original, no new sealer or grinding marks','কারখানার চেসিস সিলার বিড অরিজিনাল, নতুন সিলার বা গ্রাইন্ডিং দাগ নেই'],
+  ['fr4',0,'Pillars, roof edges and door frames straight','পিলার, ছাদের কিনারা ও দরজার ফ্রেম সোজা'],
+  ['fr5',0,'Boot floor and spare wheel well undamaged','বুটের ফ্লোর ও স্পেয়ার চাকার জায়গা অক্ষত'],
+  ['fr6',0,'Bolts on fenders, doors, bonnet and boot never opened','ফেন্ডার, দরজা, বনেট ও বুটের বোল্টে খোলার দাগ নেই'],
+  ['fr7',0,'Panel gaps even all around','চারপাশে প্যানেলের ফাঁক সমান'],
+  ['fr8',0,'No rust on body, sills and door edges','বডি, সিল ও দরজার কিনারায় মরিচা নেই']]},
+ {k:'panels',w:6,two:true,items:[
+  ['bp1',0,'Front bumper','সামনের বাম্পার'],['bp2',0,'Bonnet','বনেট'],['bp3',0,'Roof','ছাদ'],['bp4',0,'Boot lid','বুটের ঢাকনা'],['bp5',0,'Rear bumper','পেছনের বাম্পার'],
+  ['bp6',0,'Front left fender','সামনের বাম ফেন্ডার'],['bp7',0,'Front right fender','সামনের ডান ফেন্ডার'],['bp8',0,'Front left door','সামনের বাম দরজা'],['bp9',0,'Front right door','সামনের ডান দরজা'],
+  ['bp10',0,'Rear left door','পেছনের বাম দরজা'],['bp11',0,'Rear right door','পেছনের ডান দরজা'],['bp12',0,'Rear left quarter','পেছনের বাম কোয়ার্টার'],['bp13',0,'Rear right quarter','পেছনের ডান কোয়ার্টার']]},
+ {k:'glass',w:6,items:[
+  ['g1',0,'All glass original (same brand and date marks)','সব কাচ অরিজিনাল (একই ব্র্যান্ড ও তারিখ চিহ্ন)'],
+  ['g2',0,'Glass rubber beading original, no re-seal or glue marks','কাচের রাবার বিডিং অরিজিনাল, নতুন সিল বা আঠার দাগ নেই'],
+  ['g3',0,'All lamps original, not aftermarket','সব লাইট অরিজিনাল, বাজারের নকল নয়'],
+  ['g4',0,'Headlights work on low and high beam, lenses clear','হেডলাইট লো ও হাই বিমে কাজ করে, লেন্স পরিষ্কার'],
+  ['g5',0,'Fog lights work','ফগ লাইট কাজ করে'],
+  ['g6',0,'Indicators and hazard lights work','ইন্ডিকেটর ও হ্যাজার্ড লাইট কাজ করে'],
+  ['g7',0,'Brake lights work, including the high stop light','ব্রেক লাইট কাজ করে, উপরের স্টপ লাইটসহ'],
+  ['g8',0,'Reverse lights work','রিভার্স লাইট কাজ করে'],
+  ['g9',0,'Number plate lights work','নম্বর প্লেট লাইট কাজ করে'],
+  ['g10',0,'No moisture inside any lamp','কোনো লাইটের ভেতরে পানি নেই']]},
+ {k:'flood',w:10,items:[
+  ['f1',1,'No mud or silt under carpets and seats','কার্পেট ও সিটের নিচে কাদা বা বালি নেই'],
+  ['f2',1,'No rust on seat rails, seat bolts or pedals','সিট রেল, সিটের বোল্ট বা প্যাডেলে মরিচা নেই'],
+  ['f3',1,'No musty or damp smell inside','ভেতরে স্যাঁতসেঁতে বা পচা গন্ধ নেই'],
+  ['f4',1,'No water marks in boot, lamps or under the dashboard','বুট, লাইট বা ড্যাশবোর্ডের নিচে পানির দাগ নেই']]},
+ {k:'engine',w:14,items:[
+  ['e1',0,'Cold start is easy, no rattle','ঠান্ডা ইঞ্জিন সহজে চালু হয়, ঝনঝন শব্দ নেই'],
+  ['e2',0,'No oil leaks around the engine','ইঞ্জিনের চারপাশে তেল লিক নেই'],
+  ['e3',1,'Oil level OK, no milky residue under the oil cap','তেলের লেভেল ঠিক, অয়েল ক্যাপের নিচে দুধের মতো দাগ নেই'],
+  ['e4',0,'Coolant full and clean (pink or green, not brown)','কুল্যান্ট ভরা ও পরিষ্কার (গোলাপি বা সবুজ, বাদামি নয়)'],
+  ['e5',0,'No blue or white smoke from the exhaust','এক্সহস্ট থেকে নীল বা সাদা ধোঁয়া নেই'],
+  ['e6',0,'Steady idle, no odd noise or shaking','আইডল স্থির, অস্বাভাবিক শব্দ বা কাঁপুনি নেই'],
+  ['e7',0,'Belts and hoses in good shape','বেল্ট ও পাইপ ভালো অবস্থায়'],
+  ['e8',0,'Engine mounts OK (no big jerk into D or R)','ইঞ্জিন মাউন্ট ঠিক (D বা R দিলে জোরে ঝাঁকুনি নেই)'],
+  ['e9',0,'Gearbox oil clean, no burnt smell','গিয়ারবক্স অয়েল পরিষ্কার, পোড়া গন্ধ নেই'],
+  ['e10',0,'Radiator fan turns on when hot, both speeds work','গরম হলে রেডিয়েটর ফ্যান চালু হয়, দুই স্পিডই কাজ করে']]},
+ {k:'under',w:10,items:[
+  ['u1',0,'No engine oil or coolant leaks underneath','নিচে ইঞ্জিন অয়েল বা কুল্যান্ট লিক নেই'],
+  ['u2',0,'No gearbox oil leaks','গিয়ারবক্স অয়েল লিক নেই'],
+  ['u3',0,'CV axles OK, boots not torn','সিভি এক্সেল ঠিক, বুট ছেঁড়া নয়'],
+  ['u4',0,'Tie rods and tie rod ends tight, no play','টাই রড ও টাই রড এন্ড টাইট, ঢিলা নেই'],
+  ['u5',0,'Link rods (stabilizer links) no play or knock','লিংক রড (স্টেবিলাইজার লিংক) ঢিলা বা ঠকঠক নেই'],
+  ['u6',0,'Bounce test: press hard on each corner, the car settles in one bounce','বাউন্স টেস্ট: প্রতিটি কোণে জোরে চাপ দিন, একবারেই থেমে যায়'],
+  ['u7',0,'Suspension bushes and shocks: no leaks or cracks','সাসপেনশন বুশ ও শক: লিক বা ফাটল নেই'],
+  ['u8',0,'Exhaust intact, no heavy rust','এক্সহস্ট ঠিক আছে, বেশি মরিচা নেই'],
+  ['u9',0,'Brake discs and pads OK','ব্রেক ডিস্ক ও প্যাড ঠিক']]},
+ {k:'tyres',w:5,items:[
+  ['t1',0,'Front left tyre: good tread, under 5 years, no cuts','সামনের বাম টায়ার: গ্রিপ ভালো, ৫ বছরের কম, কাটা নেই'],
+  ['t2',0,'Front right tyre: good tread, under 5 years, no cuts','সামনের ডান টায়ার: গ্রিপ ভালো, ৫ বছরের কম, কাটা নেই'],
+  ['t3',0,'Rear left tyre: good tread, under 5 years, no cuts','পেছনের বাম টায়ার: গ্রিপ ভালো, ৫ বছরের কম, কাটা নেই'],
+  ['t4',0,'Rear right tyre: good tread, under 5 years, no cuts','পেছনের ডান টায়ার: গ্রিপ ভালো, ৫ বছরের কম, কাটা নেই'],
+  ['t5',0,'All tyres wear evenly (alignment OK)','সব টায়ার সমানভাবে ক্ষয় (অ্যালাইনমেন্ট ঠিক)'],
+  ['t6',0,'Rims not bent or cracked','রিম বাঁকা বা ফাটা নয়'],
+  ['t7',0,'Spare wheel present and usable','স্পেয়ার চাকা আছে ও ব্যবহারযোগ্য'],
+  ['t8',0,'Jack and wheel wrench present','জ্যাক ও হুইল রেঞ্চ আছে']]},
+ {k:'interior',w:7,items:[
+  ['i1',0,'AC blows cold within 2 minutes','এসি ২ মিনিটের মধ্যে ঠান্ডা বাতাস দেয়'],
+  ['i2',0,'AC buttons and controls all work (fan speeds, modes, temperature)','এসির সব বাটন ও কন্ট্রোল কাজ করে (ফ্যান স্পিড, মোড, টেম্প)'],
+  ['i3',0,'All warning lights go off after start','চালুর পর সব ওয়ার্নিং লাইট নিভে যায়'],
+  ['i4',0,'All switches work, no cut or taped wiring','সব সুইচ কাজ করে, কাটা বা টেপ দেওয়া তার নেই'],
+  ['i5',0,'All doors open and close smoothly, no dragging or hard slam needed','সব দরজা মসৃণভাবে খোলে ও বন্ধ হয়, আটকায় না বা জোরে লাগাতে হয় না'],
+  ['i16',0,'Door hinges firm: no sagging, squeaking or re-fitted bolts','দরজার কব্জা শক্ত: ঝুলে পড়া, কিচকিচ শব্দ বা খোলা বোল্ট নেই'],
+  ['i17',0,'Every door locks and unlocks with the key, the inside button and the central lock','প্রতিটি দরজা চাবি, ভেতরের বাটন ও সেন্ট্রাল লক দিয়ে লক-আনলক হয়'],
+  ['i6',0,'All windows work from every switch (driver panel and each door)','সব জানালা প্রতিটি সুইচ থেকে কাজ করে (ড্রাইভার প্যানেল ও প্রতিটি দরজা)'],
+  ['i7',0,'Mirrors adjust, and fold and unfold with the switch','মিরর অ্যাডজাস্ট হয়, সুইচে ফোল্ড ও আনফোল্ড হয়'],
+  ['i8',0,'Central lock and remote key work','সেন্ট্রাল লক ও রিমোট চাবি কাজ করে'],
+  ['i9',0,'Horn and wipers work','হর্ন ও ওয়াইপার কাজ করে'],
+  ['i10',0,'Audio, screen and reverse camera work','অডিও, স্ক্রিন ও রিভার্স ক্যামেরা কাজ করে'],
+  ['i11',0,'Glove box, drawers and storage boxes open and close','গ্লাভ বক্স, ড্রয়ার ও স্টোরেজ বক্স খোলে ও বন্ধ হয়'],
+  ['i12',0,'Plastic trims not broken or cracked, clips in place','প্লাস্টিক ট্রিম ভাঙা বা ফাটা নয়, ক্লিপ ঠিক আছে'],
+  ['i13',0,'Seats and roof lining clean, no tears','সিট ও ছাদের কাপড় পরিষ্কার, ছেঁড়া নেই'],
+  ['i14',0,'Wear on steering, pedals and seats matches the km','স্টিয়ারিং, প্যাডেল ও সিটের ক্ষয় কিলোমিটারের সাথে মিলে'],
+  ['i15',0,'Service history or records available','সার্ভিস হিস্ট্রি বা রেকর্ড আছে']]},
+ {k:'gas',w:6,cond:'gas',items:[
+  ['k1',1,'Cylinder re-test date valid','সিলিন্ডার রি-টেস্টের মেয়াদ আছে'],
+  ['k2',1,'No gas smell; soap test shows no leaks','গ্যাসের গন্ধ নেই; সাবান-পানি টেস্টে লিক নেই'],
+  ['k3',0,'Cylinder mounted firmly, brackets not rusted','সিলিন্ডার শক্তভাবে লাগানো, ব্র্যাকেটে মরিচা নেই'],
+  ['k4',0,'Conversion papers and kit documents available','কনভার্শনের কাগজ ও কিটের ডকুমেন্ট আছে'],
+  ['k5',0,'Switches between petrol and gas smoothly','পেট্রোল ও গ্যাসের মধ্যে সহজে বদলায়'],
+  ['k6',0,'Regulator / reducer and pipes in good shape','রেগুলেটর / রিডিউসার ও পাইপ ভালো অবস্থায়'],
+  ['k7',0,'Engine runs smooth on gas, no misfire','গ্যাসে ইঞ্জিন মসৃণ চলে, মিসফায়ার নেই']]},
+ {k:'drive',w:12,items:[
+  ['d1',0,'Gear shifts smooth, no judder or slipping','গিয়ার বদল মসৃণ, ঝাঁকুনি বা স্লিপ নেই'],
+  ['d2',0,'RPM and speed rise together, no flare between gears','আরপিএম ও গতি একসাথে বাড়ে, গিয়ারের মাঝে আরপিএম লাফায় না'],
+  ['d3',0,'Throttle response quick, no hesitation','এক্সেলারেটরে দ্রুত সাড়া দেয়, আটকে যায় না'],
+  ['d4',0,'Brakes stop straight, no noise, pedal firm','ব্রেক সোজা থামায়, শব্দ নেই, প্যাডেল শক্ত'],
+  ['d5',0,'Steering centred, no pull to one side (alignment)','স্টিয়ারিং মাঝখানে, একদিকে টানে না (অ্যালাইনমেন্ট)'],
+  ['d6',0,'No wheel bearing hum (gets louder with speed or in turns)','হুইল বেয়ারিংয়ের গুনগুন শব্দ নেই (গতি বা মোড়ে বাড়ে)'],
+  ['d7',0,'No knocking over bumps','গর্তে বা স্পিড ব্রেকারে ঠকঠক শব্দ নেই'],
+  ['d8',0,'No vibration at 60–80 km/h or when braking','৬০–৮০ কিমি/ঘণ্টায় বা ব্রেকে কাঁপুনি নেই'],
+  ['d9',0,'Cabin quiet, no wind noise or rattles','কেবিন শান্ত, বাতাস বা খটখট শব্দ নেই'],
+  ['d10',0,'Engine noise normal under acceleration','এক্সেলারেশনে ইঞ্জিনের শব্দ স্বাভাবিক'],
+  ['d11',0,'Speedometer matches GPS speed (see Scan tab)','স্পিডোমিটার জিপিএস গতির সাথে মিলে (স্ক্যান ট্যাব দেখুন)'],
+  ['d12',0,'Hybrid: EV mode works, no hybrid warning','হাইব্রিড: ইভি মোড কাজ করে, হাইব্রিড ওয়ার্নিং নেই','hyb']]},
+ {k:'mechanic',w:5,items:[
+  ['m1',1,'Our mechanic approves the car','আমাদের মেকানিক গাড়িটি অনুমোদন করেছেন'],
+  ['m2',0,'Compression test: all cylinders within 10% of each other (if done)','কমপ্রেশন টেস্ট: সব সিলিন্ডারের চাপ একে অপরের ১০% এর মধ্যে (করা হলে)']]}
+];
+const secOn=sec=>!sec.cond||(sec.cond==='gas'&&isGas());
+const itemOn=it=>it[4]!=='hyb'||isHyb();
+
+/* ---------- trouble codes ---------- */
+const DTC={
+ P0011:['Camshaft timing too advanced','ক্যামশ্যাফট টাইমিং বেশি এগিয়ে'],P0012:['Camshaft timing too retarded','ক্যামশ্যাফট টাইমিং পিছিয়ে'],
+ P0016:['Crank and cam timing mismatch (timing chain?)','ক্র্যাঙ্ক ও ক্যাম টাইমিং মিলছে না (টাইমিং চেইন?)'],
+ P0101:['Air flow sensor reading out of range','এয়ার ফ্লো সেন্সরের রিডিং ঠিক নেই'],P0102:['Air flow sensor signal low','এয়ার ফ্লো সেন্সরের সিগন্যাল কম'],
+ P0113:['Intake air temperature sensor fault','ইনটেক এয়ার টেম্পারেচার সেন্সর সমস্যা'],P0115:['Coolant temperature sensor fault','কুল্যান্ট টেম্পারেচার সেন্সর সমস্যা'],
+ P0116:['Coolant temperature sensor reading wrong','কুল্যান্ট টেম্পারেচার রিডিং ভুল'],P0128:['Engine warms up too slowly (thermostat)','ইঞ্জিন দেরিতে গরম হয় (থার্মোস্ট্যাট)'],
+ P0130:['Oxygen sensor circuit fault','অক্সিজেন সেন্সর সার্কিট সমস্যা'],P0134:['Oxygen sensor not responding','অক্সিজেন সেন্সর সাড়া দিচ্ছে না'],
+ P0135:['Oxygen sensor heater fault','অক্সিজেন সেন্সর হিটার সমস্যা'],P0141:['Rear oxygen sensor heater fault','পেছনের অক্সিজেন সেন্সর হিটার সমস্যা'],
+ P0171:['Engine running lean (air leak, weak injector or air flow sensor)','ইঞ্জিনে মিশ্রণ পাতলা (এয়ার লিক, দুর্বল ইনজেক্টর বা এয়ার ফ্লো সেন্সর)'],
+ P0172:['Engine running rich','ইঞ্জিনে মিশ্রণ ঘন'],P0300:['Random misfire','এলোমেলো মিসফায়ার'],
+ P0301:['Misfire in cylinder 1','সিলিন্ডার ১ এ মিসফায়ার'],P0302:['Misfire in cylinder 2','সিলিন্ডার ২ এ মিসফায়ার'],P0303:['Misfire in cylinder 3','সিলিন্ডার ৩ এ মিসফায়ার'],P0304:['Misfire in cylinder 4','সিলিন্ডার ৪ এ মিসফায়ার'],
+ P0325:['Knock sensor fault','নক সেন্সর সমস্যা'],P0335:['Crankshaft sensor fault','ক্র্যাঙ্কশ্যাফট সেন্সর সমস্যা'],P0340:['Camshaft sensor fault','ক্যামশ্যাফট সেন্সর সমস্যা'],
+ P0401:['EGR flow too low (common on Prius)','ইজিআর ফ্লো কম (প্রিয়াসে সাধারণ)'],P0420:['Catalytic converter below efficiency','ক্যাটালিটিক কনভার্টার দুর্বল'],
+ P0440:['Fuel vapour (EVAP) system fault','ফুয়েল ভেপার (ইভ্যাপ) সিস্টেম সমস্যা'],P0441:['EVAP purge flow fault','ইভ্যাপ পার্জ ফ্লো সমস্যা'],P0455:['Large EVAP leak (fuel cap?)','বড় ইভ্যাপ লিক (ফুয়েল ক্যাপ?)'],P0456:['Small EVAP leak','ছোট ইভ্যাপ লিক'],
+ P0500:['Vehicle speed sensor fault','গতি সেন্সর সমস্যা'],P0505:['Idle control fault','আইডল কন্ট্রোল সমস্যা'],P0562:['System voltage low','সিস্টেম ভোল্টেজ কম'],P0563:['System voltage high','সিস্টেম ভোল্টেজ বেশি'],
+ P0606:['Engine computer internal fault','ইঞ্জিন কম্পিউটারের ভেতরের সমস্যা'],P0700:['Gearbox fault — read gearbox codes','গিয়ারবক্স সমস্যা — গিয়ারবক্সের কোড দেখুন'],
+ P0715:['Gearbox input speed sensor fault','গিয়ারবক্স ইনপুট স্পিড সেন্সর সমস্যা'],P0741:['Torque converter clutch fault','টর্ক কনভার্টার ক্লাচ সমস্যা'],
+ P0A0F:['Hybrid: engine failed to start','হাইব্রিড: ইঞ্জিন চালু হয়নি'],P0A1D:['Hybrid control computer fault','হাইব্রিড কন্ট্রোল কম্পিউটার সমস্যা'],
+ P0A7F:['Hybrid battery pack deteriorated','হাইব্রিড ব্যাটারি প্যাক দুর্বল হয়ে গেছে'],P0A80:['Replace hybrid battery pack','হাইব্রিড ব্যাটারি প্যাক বদলাতে হবে'],
+ P0A93:['Inverter cooling system fault','ইনভার্টার কুলিং সিস্টেম সমস্যা'],P0AA6:['Hybrid high-voltage insulation fault','হাইব্রিড হাই-ভোল্টেজ ইনসুলেশন সমস্যা'],
+ P3000:['Hybrid battery control fault','হাইব্রিড ব্যাটারি কন্ট্রোল সমস্যা'],P3190:['Poor engine power (hybrid)','ইঞ্জিনের শক্তি কম (হাইব্রিড)'],
+ P2195:['Front air-fuel sensor stuck lean','সামনের এয়ার-ফুয়েল সেন্সর পাতলা দেখাচ্ছে'],P2196:['Front air-fuel sensor stuck rich','সামনের এয়ার-ফুয়েল সেন্সর ঘন দেখাচ্ছে'],
+ U0100:['Lost communication with engine computer','ইঞ্জিন কম্পিউটারের সাথে যোগাযোগ নেই']
+};
+function dtcText(c){const d=DTC[c];if(d)return bi(d[0],d[1]);
+ const sys={P:['Engine or gearbox','ইঞ্জিন বা গিয়ারবক্স'],C:['Chassis (ABS, steering)','চেসিস (এবিএস, স্টিয়ারিং)'],B:['Body (airbag, AC, lights)','বডি (এয়ারব্যাগ, এসি, লাইট)'],U:['Network between computers','কম্পিউটারগুলোর নেটওয়ার্ক']}[c[0]]||['Unknown','অজানা'];
+ const mfr=c[1]==='1'||c[1]==='3';return bi(sys[0],sys[1])+(mfr?bi(' — maker-specific code, ask the mechanic',' — নির্মাতার নিজস্ব কোড, মেকানিককে দেখান'):'');}
+
+/* ---------- ELM327 parsing ---------- */
+function cleanLines(raw){return String(raw).replace(/>/g,'').split(/[\r\n]+/).map(l=>l.trim().toUpperCase())
+  .filter(l=>l&&!/^(SEARCHING|BUS INIT|OK$|STOPPED|\?$|TIMEOUT)/.test(l));}
+function frames(raw){const lines=cleanLines(raw);
+  if(lines.some(l=>/^[0-9A-F]:/.test(l))){let s='';lines.forEach(l=>{const m=l.match(/^([0-9A-F]):\s*(.*)$/);if(m)s+=m[2].replace(/\s/g,'')});return[s]}
+  return lines.map(l=>l.replace(/\s/g,'')).filter(l=>/^[0-9A-F]+$/.test(l));}
+const noData=raw=>/NO DATA|UNABLE|ERROR|TIMEOUT/i.test(raw)&&!frames(raw).length;
+const toBytes=h=>{const b=[];for(let k=0;k+1<h.length;k+=2)b.push(parseInt(h.slice(k,k+2),16));return b};
+function pidBytes(raw,mode,pid){const want=(mode+0x40).toString(16).toUpperCase()+pid.toUpperCase();
+  for(const m of frames(raw)){let i=-1;while((i=m.indexOf(want,i+1))>=0){if(i%2===0)return toBytes(m.slice(i+want.length))}}
+  return null;}
+function decodeDtc(h){const n=parseInt(h[0],16);return 'PCBU'[n>>2]+(n&3)+h.slice(1);}
+function parseDtcs(raw,resp,isCan){const out=new Set();
+  for(const m of frames(raw)){const i=m.indexOf(resp);if(i<0||i%2)continue;let d=m.slice(i+2);if(isCan)d=d.slice(2);
+    for(let k=0;k+4<=d.length;k+=4){const c=d.slice(k,k+4);if(c!=='0000')out.add(decodeDtc(c))}}
+  return[...out];}
+function parseVin(raw,isCan){const b=pidBytes(raw,9,'02');if(!b)return null;let bytes=b;if(isCan&&bytes[0]===1)bytes=bytes.slice(1);
+  const s=bytes.filter(x=>x>=0x30&&x<=0x5A).map(x=>String.fromCharCode(x)).join('');return s.length>=11?s.slice(-17):null;}
+/* Mode 06 (CAN): records of 9 bytes: MID TID UASID value(2) min(2) max(2) */
+function parseMode06(raw,mid){for(const m of frames(raw)){const i=m.indexOf('46');if(i<0||i%2)continue;const b=toBytes(m.slice(i+2));const out={};
+  for(let k=0;k+9<=b.length;k+=9){if(b[k]!==mid)continue;out[b[k+1]]=b[k+3]*256+b[k+4]}if(Object.keys(out).length)return out}return null;}
+const MON_SPARK=['Catalyst','Heated catalyst','EVAP system','Secondary air','A/C refrigerant','Oxygen sensor','O2 sensor heater','EGR system'];
+const MON_BASE=['Misfire','Fuel system','Components'];
+function parseMonitors(b){if(!b||b.length<4)return null;const[A,B,C,D]=b;const list=[];
+  for(let i=0;i<3;i++)if(B&(1<<i))list.push({n:MON_BASE[i],ok:!(B&(1<<(i+4)))});
+  if(!(B&8))for(let i=0;i<8;i++)if(C&(1<<i))list.push({n:MON_SPARK[i],ok:!(D&(1<<i))});
+  return{mil:!!(A&0x80),count:A&0x7F,list,incomplete:list.filter(x=>!x.ok).length};}
+/* standard mode 01 sensors: pid -> [key, en, bn, unit, formula, decimals] */
+const PID_DEFS={
+ '04':['load','Engine load','ইঞ্জিন লোড','%',b=>b[0]*100/255,0],
+ '05':['ect','Coolant temperature','কুল্যান্ট তাপমাত্রা','°C',b=>b[0]-40,0],
+ '06':['stft','Short fuel trim','শর্ট ফুয়েল ট্রিম','%',b=>(b[0]-128)*100/128,1],
+ '07':['ltft','Long fuel trim','লং ফুয়েল ট্রিম','%',b=>(b[0]-128)*100/128,1],
+ '0B':['map','Intake pressure (MAP)','ইনটেক প্রেশার (MAP)','kPa',b=>b[0],0],
+ '0C':['rpm','Engine speed','ইঞ্জিন আরপিএম','rpm',b=>(b[0]*256+b[1])/4,0],
+ '0D':['spd','Vehicle speed','গাড়ির গতি','km/h',b=>b[0],0],
+ '0E':['adv','Ignition timing','ইগনিশন টাইমিং','°',b=>b[0]/2-64,1],
+ '0F':['iat','Intake air temperature','ইনটেক বাতাসের তাপমাত্রা','°C',b=>b[0]-40,0],
+ '10':['maf','Air flow (MAF)','এয়ার ফ্লো (MAF)','g/s',b=>(b[0]*256+b[1])/100,2],
+ '11':['tps','Throttle position','থ্রটল পজিশন','%',b=>b[0]*100/255,0],
+ '14':['o2a','Oxygen sensor 1','অক্সিজেন সেন্সর ১','V',b=>b[0]/200,2],
+ '15':['o2b','Oxygen sensor 2 (after catalyst)','অক্সিজেন সেন্সর ২ (ক্যাটালিস্টের পরে)','V',b=>b[0]/200,2],
+ '1F':['run','Time since engine start','ইঞ্জিন চালুর পর সময়','s',b=>b[0]*256+b[1],0],
+ '2F':['fuel','Fuel level','ফুয়েল লেভেল','%',b=>b[0]*100/255,0],
+ '33':['baro','Air pressure','বায়ুচাপ','kPa',b=>b[0],0],
+ '34':['lam','Air-fuel sensor (lambda)','এয়ার-ফুয়েল সেন্সর (ল্যাম্বডা)','λ',b=>(b[0]*256+b[1])*2/65536,3],
+ '3C':['cat','Catalyst temperature','ক্যাটালিস্টের তাপমাত্রা','°C',b=>(b[0]*256+b[1])/10-40,0],
+ '42':['volt','Control module voltage','কন্ট্রোল মডিউল ভোল্টেজ','V',b=>(b[0]*256+b[1])/1000,2],
+ '43':['absload','Absolute load','অ্যাবসোলিউট লোড','%',b=>(b[0]*256+b[1])*100/255,0],
+ '44':['cmdlam','Commanded lambda','কমান্ডেড ল্যাম্বডা','λ',b=>(b[0]*256+b[1])*2/65536,3],
+ '46':['amb','Outside air temperature','বাইরের তাপমাত্রা','°C',b=>b[0]-40,0],
+ '49':['pedal','Accelerator pedal','এক্সেলারেটর প্যাডেল','%',b=>b[0]*100/255,0],
+ '5C':['oil','Engine oil temperature','ইঞ্জিন অয়েলের তাপমাত্রা','°C',b=>b[0]-40,0],
+ 'A6':['odo','Odometer','ওডোমিটার','km',b=>(b[0]*16777216+b[1]*65536+b[2]*256+b[3])/10,0]};
+const FAST=['0C','0D','05','04','10','06','07','42','11'];
+
+/* ---------- links ---------- */
+const BLE_SVCS=[0xfff0,0xffe0,0x18f0,'e7810a71-73ae-499d-8c15-faa9aef0c3f2'];
+class BleLink{
+  constructor(){this.buf='';this.q=Promise.resolve();this.demo=false}
+  async connect(){
+    this.dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:BLE_SVCS});
+    this.dev.addEventListener('gattserverdisconnected',()=>this.onLost&&this.onLost());
+    const server=await this.dev.gatt.connect();let found=null;
+    for(const s of BLE_SVCS){try{const svc=await server.getPrimaryService(s);const ch=await svc.getCharacteristics();
+      const rx=ch.find(c=>c.properties.notify||c.properties.indicate),tx=ch.find(c=>c.properties.write||c.properties.writeWithoutResponse);
+      if(rx&&tx){found={rx,tx};break}}catch(e){}}
+    if(!found)throw new Error('No scanner service found on this device');
+    this.rx=found.rx;this.tx=found.tx;await this.rx.startNotifications();
+    const dec=new TextDecoder();
+    this.rx.addEventListener('characteristicvaluechanged',e=>{this.buf+=dec.decode(e.target.value);this._chk()});
+    this.name=this.dev.name||'OBD scanner';
+  }
+  _chk(){if(this.res&&this.buf.includes('>')){const o=this.buf,r=this.res;this.buf='';this.res=null;clearTimeout(this.tmr);r(o)}}
+  send(cmd,timeout=4000){
+    const p=this.q.then(()=>new Promise(async resolve=>{
+      this.buf='';this.res=resolve;
+      this.tmr=setTimeout(()=>{if(this.res){this.res=null;resolve(this.buf+'\nTIMEOUT')}},timeout);
+      try{const data=new TextEncoder().encode(cmd+'\r');
+        for(let i=0;i<data.length;i+=20){const c=data.slice(i,i+20);
+          if(this.tx.properties.writeWithoutResponse)await this.tx.writeValueWithoutResponse(c);else await this.tx.writeValue(c)}}
+      catch(e){clearTimeout(this.tmr);this.res=null;resolve('ERROR '+e.message)}
+    }));
+    this.q=p.catch(()=>{});return p;
+  }
+  disconnect(){try{this.dev.gatt.disconnect()}catch(e){}}
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function supMask(base,list){let m=0;list.forEach(p=>{const n=parseInt(p,16)-base;if(n>=1&&n<=32)m|=(1<<(32-n))>>>0});return m>>>0;}
+class DemoLink{
+  constructor(){this.demo=true;this.name='Demo';this.t0=Date.now();this.ac=false}
+  async connect(){await sleep(400)}
+  disconnect(){}
+  async send(cmd){await sleep(cmd==='0100'?600:60);const el=(Date.now()-this.t0)/1000,j=a=>(Math.random()*2-1)*a;
+    const h=(n,b=1)=>{n=Math.max(0,Math.round(n));let s='';for(let i=b-1;i>=0;i--)s+=' '+((Math.floor(n/2**(8*i)))&255).toString(16).toUpperCase().padStart(2,'0');return s};
+    const SUP=['01','03','04','05','06','07','0B','0C','0D','0E','0F','10','11','13','14','15','1C','1F','20','21','2E','2F','30','31','33','34','3C','40','41','42','43','44','45','46','49','4E'];
+    const supResp=base=>'41 '+base.toString(16).toUpperCase().padStart(2,'0')+h(supMask(base,SUP),4);
+    const fixed={ATZ:'ELM327 v1.5',ATE0:'OK',ATL0:'OK',ATS0:'OK',ATH0:'OK',ATSP0:'OK',ATAT1:'OK',ATDPN:'A6',ATRV:(14.1+j(.1)).toFixed(1)+'V',
+      '0100':'SEARCHING...\r'+supResp(0),'0120':supResp(0x20),'0140':supResp(0x40),'0160':'NO DATA','01A0':'NO DATA',
+      '0101':'41 01 00 07 65 21','03':'43 00','07':'47 01 01 71','0A':'4A 00','0902':'NO DATA',
+      '0131':'41 31 00 26','014E':'41 4E 00 2D','0130':'41 30 03','0121':'41 21 00 00','01A6':'NO DATA',
+      '06A2':'46 A2 0B 24 00 01 00 00 FF FF A2 0C 24 00 00 00 00 FF FF','06A3':'46 A3 0B 24 00 00 00 00 FF FF A3 0C 24 00 00 00 00 FF FF',
+      '06A4':'46 A4 0B 24 00 09 00 00 FF FF A4 0C 24 00 06 00 00 FF FF','06A5':'46 A5 0B 24 00 01 00 00 FF FF A5 0C 24 00 00 00 00 FF FF'}[cmd];
+    if(fixed)return fixed+'\r\r>';
+    const idle=this.forceIdle||el%40<25,spd=idle?0:Math.min(70,(el%40-25)*6),rpm=(idle?(this.ac?760:720):1500+spd*25)+j(idle?20:40),load=(idle?(this.ac?33:24):45)+j(2);
+    const v={'0C':h(rpm*4,2),'0D':h(spd),'05':h(Math.min(88,62+el/3)+40),'06':h(128+(6+j(3))*1.28),'07':h(128+14*1.28),'42':h((14.1+j(.1))*1000,2),
+      '04':h(load*2.55),'0F':h(74),'10':h((idle?(this.ac?3.4:2.6):9+spd/8)*100,2),'11':h((idle?14:28)*2.55),'0B':h(idle?31:55),'0E':h((idle?8:18)*2+128),
+      '14':h((.1+Math.random()*.7)*200),'15':h(.68*200),'1F':h(el+300,2),'2F':h(55*2.55),'33':h(101),'34':h(32768+j(400),2),'3C':h((520+40)*10,2),
+      '43':h(30*2.55,2),'44':h(32768,2),'46':h(70),'49':h((idle?0:22)*2.55)}[cmd.slice(2)];
+    return (cmd.startsWith('01')&&v?'41 '+cmd.slice(2)+v:'NO DATA')+'\r\r>';}
+}
+
+/* ---------- state ---------- */
+function blank(){return{id:'i'+Date.now().toString(36),created:new Date().toISOString(),sample:false,
+  car:{fuel:'',model:'',year:'',km:'',chassis:'',regNo:'',color:'',colorOther:'',location:'',seller:'',phone:'',link:'',sellerType:'',asking:'',market:'',profit:40000,papersCost:15000,adsCost:12000,inspector:''},
+  scan:null,hybrid:{health:'',weak:''},checks:{},notes:''}}
+function sampleState(){const s=blank();s.sample=true;
+  Object.assign(s.car,{fuel:'hybrid',model:'axio_h',year:'2016',km:'86500',chassis:'NKE165-7123456',regNo:'Chatta Metro-Ga 11-2345',color:'pearl',location:'GEC, Chattogram',seller:'Example seller',sellerType:'owner',asking:'1650000',market:'1720000',inspector:'Example Motors'});
+  SECTIONS.forEach(sec=>sec.items.forEach(it=>{if(sec.cond==='gas')return;s.checks[it[0]]={r:'ok',cost:'',note:''}}));
+  const set=(id,r,cost,note)=>s.checks[id]={r,cost:cost||'',note:note||''};
+  set('p7','minor',3000,'Fitness expires next month');set('fr6','minor',0,'Front right fender bolts turned — matches repaint');
+  set('bp7','minor',6000,'Scrape on front right fender');set('bp1','minor',3500,'Small crack under front bumper');
+  set('g5','minor',2500,'Left fog light not working');set('u5','minor',3500,'Front left link rod knocks');set('t1','minor',8000,'2019 tyre');set('t2','minor',8000,'2019 tyre');
+  set('i12','minor',1500,'Broken clip on glove box');set('i15','minor');set('d7','minor');set('m2','na');
+  s.hybrid={health:'82',weak:'1'};
+  s.scan={at:new Date().toISOString(),demo:true,proto:'6',isCan:true,vin:null,adapterVolt:14.1,odo:null,
+    mon:parseMonitors([0x00,0x07,0x65,0x21]),stored:[],pending:['P0171'],permanent:[],distCleared:38,timeCleared:45,warmups:3,distMil:0,
+    snap:{rpm:722,ect:86,stft:5.5,ltft:14.1,volt:14.08,load:24,maf:2.6},samples:[],
+    cyl:{1:1,2:0,3:9,4:1},ac:{off:{rpm:721,load:24,maf:2.6,sd:14},on:{rpm:758,load:33,maf:3.4,sd:18}}};
+  s.notes='Example only. Seller says the front right fender was repainted after a parking scrape.';
+  return s;}
+function migrate(s){if(!s||!s.car)return null;if(!s.car.fuel)s.car.fuel=s.car.hybrid?'hybrid':'';delete s.car.hybrid;delete s.paint;delete s.car.grade;
+  if(s.car.color&&!COLORS.some(c=>c[0]===s.car.color)){s.car.colorOther=s.car.color;s.car.color='other'}return s;}
+let S=migrate(store.get('cc.current',null))||sampleState();
+let tab=store.get('cc.tab','car');
+let link=null,linkName='',busy=false,recording=false,logLines=[],liveNow={},sup=null,gpsWatch=null,gpsSpeed=null,useGps=false,acStage='ready';
+const save=()=>store.set('cc.current',S);
+
+/* ---------- scan logic ---------- */
+function log(cmd,res){logLines.push('> '+cmd+'\n'+String(res).replace(/\r/g,'\n').replace(/\n+/g,'\n').trim());if(logLines.length>500)logLines.shift();
+  const el=document.getElementById('logBox');if(el){el.textContent=logLines.join('\n');el.scrollTop=el.scrollHeight}}
+async function cmd(c,to){const r=await link.send(c,to);log(c,r);return r}
+async function initAdapter(){await cmd('ATZ',5000);await sleep(300);for(const c of['ATE0','ATL0','ATS0','ATH0','ATAT1','ATSP0'])await cmd(c,2000);}
+async function readSupport(){const set=new Set();let base=0;
+  while(base<=0xA0){const pid=base.toString(16).toUpperCase().padStart(2,'0');const b=pidBytes(await cmd('01'+pid,base===0?12000:3000),1,pid);if(!b||b.length<4)break;
+    const mask=((b[0]<<24)>>>0)+(b[1]<<16)+(b[2]<<8)+b[3];
+    for(let n=1;n<=32;n++)if(mask&((1<<(32-n))>>>0))set.add((base+n).toString(16).toUpperCase().padStart(2,'0'));
+    if(!set.has((base+32).toString(16).toUpperCase().padStart(2,'0')))break;base+=32;}
+  return set;}
+const supported=p=>!sup||sup.has(p);
+async function readPid(p){const bb=pidBytes(await link.send('01'+p,2500),1,p);if(!bb)return null;const d=PID_DEFS[p];try{return d[4](bb)}catch(e){return null}}
+async function runFullScan(){if(!link||busy)return;busy=true;render();
+  try{const sc={at:new Date().toISOString(),demo:!!link.demo};
+    const rv=await cmd('ATRV',2000);const mv=rv.match(/(\d+(\.\d+)?)\s*V/i);sc.adapterVolt=mv?+mv[1]:null;
+    sup=await readSupport();sc.sup=[...sup];
+    const dp=(await cmd('ATDPN',2000)).replace(/[^0-9A-F]/gi,'').replace(/^A/i,'');sc.proto=dp;sc.isCan=/^[6-9AB]$/i.test(dp);
+    sc.mon=parseMonitors(pidBytes(await cmd('0101'),1,'01'));
+    sc.stored=parseDtcs(await cmd('03',6000),'43',sc.isCan);
+    sc.pending=parseDtcs(await cmd('07',6000),'47',sc.isCan);
+    const pr=await cmd('0A',6000);sc.permanent=noData(pr)?[]:parseDtcs(pr,'4A',sc.isCan);
+    sc.vin=parseVin(await cmd('0902',6000),sc.isCan);
+    let b=pidBytes(await cmd('0131'),1,'31');sc.distCleared=b?b[0]*256+b[1]:null;
+    b=pidBytes(await cmd('014E'),1,'4E');sc.timeCleared=b?b[0]*256+b[1]:null;
+    b=pidBytes(await cmd('0130'),1,'30');sc.warmups=b?b[0]:null;
+    b=pidBytes(await cmd('0121'),1,'21');sc.distMil=b?b[0]*256+b[1]:null;
+    b=pidBytes(await cmd('01A6'),1,'A6');sc.odo=b&&b.length>=4?PID_DEFS.A6[4](b):null;
+    sc.snap={};for(const p of Object.keys(PID_DEFS)){if(p==='A6'||!sup.has(p))continue;const v=await readPid(p);if(v!=null){sc.snap[PID_DEFS[p][0]]=v;liveNow[PID_DEFS[p][0]]=v}}
+    const old=S.scan||{};sc.samples=old.samples||[];sc.cyl=old.cyl||null;sc.ac=old.ac||null;
+    S.scan=sc;S.sample=false;save();toast(t('savedT'));
+  }catch(e){log('ERROR',e.message)}
+  busy=false;render();}
+async function liveLoop(){const slow=Object.keys(PID_DEFS).filter(p=>!FAST.includes(p)&&p!=='A6'&&supported(p));let si=0;
+  if(!S.scan)S.scan={at:new Date().toISOString(),demo:!!link.demo,samples:[]};
+  while(recording&&link){const row={t:Date.now()};
+    for(const p of FAST){if(!recording)break;if(!supported(p))continue;const v=await readPid(p);if(v!=null){row[PID_DEFS[p][0]]=v;liveNow[PID_DEFS[p][0]]=v}}
+    if(slow.length&&recording){const p=slow[si++%slow.length];const v=await readPid(p);if(v!=null)liveNow[PID_DEFS[p][0]]=v}
+    if(useGps&&gpsSpeed!=null)row.gps=gpsSpeed;
+    S.scan.samples=(S.scan.samples||[]);S.scan.samples.push(row);if(S.scan.samples.length>1500)S.scan.samples.shift();
+    updateLive();}
+  save();}
+function startGps(){if(!navigator.geolocation){toast(t('gpsFail'));return false}
+  gpsWatch=navigator.geolocation.watchPosition(p=>{gpsSpeed=p.coords.speed!=null?p.coords.speed*3.6:null;liveNow.gps=gpsSpeed},()=>{toast(t('gpsFail'));useGps=false;render()},{enableHighAccuracy:true,maximumAge:1000});return true;}
+function stopGps(){if(gpsWatch!=null)navigator.geolocation.clearWatch(gpsWatch);gpsWatch=null;gpsSpeed=null;}
+async function runCylTest(){if(!link||busy)return;busy=true;render();
+  try{const res={};let any=false;for(let c=1;c<=4;c++){const mid=0xA1+c;const r=parseMode06(await cmd('06'+mid.toString(16).toUpperCase(),4000),mid);
+      if(r){any=true;res[c]=r[0x0B]!=null?r[0x0B]:(r[0x0C]!=null?r[0x0C]:0)}}
+    if(!S.scan)S.scan={at:new Date().toISOString(),demo:!!link.demo,samples:[]};
+    S.scan.cyl=any?res:'none';save();}catch(e){log('ERROR',e.message)}
+  busy=false;render();}
+async function acSample(){const rows=[];for(let i=0;i<15;i++){const r={};for(const p of['0C','04','10']){if(!supported(p))continue;const v=await readPid(p);if(v!=null)r[PID_DEFS[p][0]]=v}rows.push(r);await sleep(150)}
+  const st=k=>sampleStats(rows,k);const rp=st('rpm'),ld=st('load'),mf=st('maf');
+  return{rpm:rp&&rp.avg,sd:rp&&rp.sd,load:ld&&ld.avg,maf:mf&&mf.avg};}
+async function acStep(){if(!link||busy)return;busy=true;if(link.demo)link.forceIdle=true;
+  if(acStage==='ready'||acStage==='done'){acStage='runOff';render();if(link.demo)link.ac=false;const off=await acSample();
+    if(!S.scan)S.scan={at:new Date().toISOString(),demo:!!link.demo,samples:[]};S.scan.ac={off};acStage='waitOn';}
+  else if(acStage==='waitOn'){acStage='runOn';render();if(link.demo)link.ac=true;await sleep(link.demo?300:5000);S.scan.ac.on=await acSample();acStage='done';link.forceIdle=false;save();}
+  busy=false;render();}
+function sampleStats(samples,k,filter){const v=samples.filter(filter||(()=>true)).map(s=>s[k]).filter(x=>x!=null&&!isNaN(x));if(!v.length)return null;
+  const avg=v.reduce((a,b)=>a+b,0)/v.length;const sd=Math.sqrt(v.reduce((a,b)=>a+(b-avg)**2,0)/v.length);return{avg,sd,min:Math.min(...v),max:Math.max(...v),n:v.length};}
+
+function analyzeScan(sc,hyb){
+  const F=[];let sc100=100;const add=(sev,en,bn,pen)=>{F.push({sev,en,bn});sc100-=pen||0};
+  if(!sc)return{findings:[],score:null,capRisky:false};
+  if(sc.demo)add('info','Demo data — not a real car.','ডেমো ডেটা — আসল গাড়ি নয়।');
+  const m=sc.mon;
+  if(m&&m.mil)add('bad','Check engine light is ON.','চেক ইঞ্জিন লাইট জ্বলছে।',25);
+  if(sc.stored&&sc.stored.length)add('bad',sc.stored.length+' stored fault code(s): '+sc.stored.join(', '),sc.stored.length+'টি স্টোর করা ফল্ট কোড: '+sc.stored.join(', '),Math.min(45,15*sc.stored.length));
+  if(sc.pending&&sc.pending.length)add('warn','Pending code(s) — a fault the car is still confirming: '+sc.pending.join(', '),'পেন্ডিং কোড — গাড়ি এখনো সমস্যা নিশ্চিত করছে: '+sc.pending.join(', '),Math.min(24,8*sc.pending.length));
+  if(sc.permanent&&sc.permanent.length)add('warn','Permanent code(s) — a recent fault that clearing cannot hide: '+sc.permanent.join(', '),'স্থায়ী কোড — সাম্প্রতিক সমস্যা যা মুছে লুকানো যায় না: '+sc.permanent.join(', '),10);
+  const recentDist=sc.distCleared!=null&&sc.distCleared<300,recentTime=sc.timeCleared!=null&&sc.timeCleared<300,
+        fewWarm=sc.warmups!=null&&sc.warmups<10,incomplete=m&&m.incomplete>=2;
+  let capRisky=false;
+  if(recentDist||recentTime||(fewWarm&&incomplete)){capRisky=true;
+    add('bad','Codes were cleared recently'+(sc.distCleared!=null?' (only '+sc.distCleared+' km ago)':'')+'. The seller may be hiding a problem. Re-scan after 200+ km of driving.',
+      'সম্প্রতি কোড মোছা হয়েছে'+(sc.distCleared!=null?' (মাত্র '+sc.distCleared+' কিমি আগে)':'')+'। বিক্রেতা সমস্যা লুকাতে পারেন। ২০০+ কিমি চালানোর পর আবার স্ক্যান করুন।',35);}
+  else if(sc.distCleared!=null)add('good','No sign of recent code clearing ('+sc.distCleared+' km since last clear).','সম্প্রতি কোড মোছার চিহ্ন নেই (শেষবার মোছার পর '+sc.distCleared+' কিমি)।');
+  if(m&&m.incomplete>0&&!capRisky)add('warn',m.incomplete+' readiness monitor(s) not complete.',m.incomplete+'টি রেডিনেস মনিটর সম্পূর্ণ হয়নি।',Math.min(15,5*m.incomplete));
+  const km=+S.car.km;
+  if(sc.odo!=null&&km){const d=Math.abs(sc.odo-km);if(d>1000)add('bad','Odometer in the engine computer ('+Math.round(sc.odo)+' km) does not match the dashboard ('+km+' km). Possible rollback.','ইঞ্জিন কম্পিউটারের ওডোমিটার ('+Math.round(sc.odo)+' কিমি) ড্যাশবোর্ডের ('+km+' কিমি) সাথে মিলছে না। মাইলেজ কমানো হতে পারে।',30);
+    else add('good','Odometer matches the engine computer.','ওডোমিটার ইঞ্জিন কম্পিউটারের সাথে মিলেছে।');}
+  else add('info','This car does not report the odometer to the scanner. Judge mileage by wear and service records.','এই গাড়ি স্ক্যানারে ওডোমিটার জানায় না। ক্ষয় ও সার্ভিস রেকর্ড দেখে মাইলেজ বুঝুন।');
+  const smp=sc.samples||[];
+  const lt=sampleStats(smp,'ltft'),st=sampleStats(smp,'stft');const ltv=lt?lt.avg:(sc.snap&&sc.snap.ltft),stv=st?st.avg:(sc.snap&&sc.snap.stft);
+  if(ltv!=null){const tot=ltv+(stv||0);
+    if(Math.abs(tot)>20)add('bad','Fuel trims far off ('+tot.toFixed(1)+'%). Look for air leaks, injectors or the air flow sensor.','ফুয়েল ট্রিম অনেক বেশি ('+tot.toFixed(1)+'%)। এয়ার লিক, ইনজেক্টর বা এয়ার ফ্লো সেন্সর দেখুন।',15);
+    else if(Math.abs(tot)>10)add('warn','Fuel trims a bit high ('+tot.toFixed(1)+'%). Possible small air leak, weak injector or sensor.','ফুয়েল ট্রিম একটু বেশি ('+tot.toFixed(1)+'%)। ছোট এয়ার লিক, দুর্বল ইনজেক্টর বা সেন্সর হতে পারে।',7);
+    else add('good','Fuel trims normal ('+tot.toFixed(1)+'%) — injectors and air flow look fine.','ফুয়েল ট্রিম স্বাভাবিক ('+tot.toFixed(1)+'%) — ইনজেক্টর ও এয়ার ফ্লো ঠিক মনে হচ্ছে।');}
+  const idleMaf=sampleStats(smp,'maf',s=>s.spd===0&&s.rpm>400);const mafv=idleMaf?idleMaf.avg:(sc.snap&&sc.snap.maf);
+  if(mafv!=null&&!hyb){if(mafv<1.5)add('warn','Air flow at idle is low ('+mafv.toFixed(1)+' g/s). Air flow sensor may be dirty.','আইডলে এয়ার ফ্লো কম ('+mafv.toFixed(1)+' g/s)। এয়ার ফ্লো সেন্সর ময়লা হতে পারে।',4);
+    else if(mafv<=7)add('good','Air flow at idle normal ('+mafv.toFixed(1)+' g/s).','আইডলে এয়ার ফ্লো স্বাভাবিক ('+mafv.toFixed(1)+' g/s)।');}
+  const vs=sampleStats(smp,'volt',s=>s.rpm>500);const vv=vs?vs.avg:(sc.snap&&sc.snap.rpm>500?sc.snap.volt:null);
+  if(vv!=null){if(vv<13.2)add('warn','Charging voltage low ('+vv.toFixed(2)+' V). Check alternator'+(hyb?' / DC-DC converter':'')+' and 12V battery.','চার্জিং ভোল্টেজ কম ('+vv.toFixed(2)+' V)। অল্টারনেটর'+(hyb?' / ডিসি-ডিসি কনভার্টার':'')+' ও ১২ ভোল্ট ব্যাটারি দেখুন।',7);
+    else if(vv>15)add('bad','Charging voltage too high ('+vv.toFixed(2)+' V).','চার্জিং ভোল্টেজ অনেক বেশি ('+vv.toFixed(2)+' V)।',10);
+    else add('good','Charging voltage normal ('+vv.toFixed(2)+' V).','চার্জিং ভোল্টেজ স্বাভাবিক ('+vv.toFixed(2)+' V)।');}
+  const ec=sampleStats(smp,'ect');const ecmax=ec?ec.max:(sc.snap&&sc.snap.ect);
+  if(ecmax!=null&&ecmax>105)add('bad','Engine ran hot ('+Math.round(ecmax)+' °C). Check radiator, fan and coolant.','ইঞ্জিন বেশি গরম হয়েছে ('+Math.round(ecmax)+' °C)। রেডিয়েটর, ফ্যান ও কুল্যান্ট দেখুন।',15);
+  else if(ecmax!=null&&ecmax>=80)add('good','Engine temperature normal ('+Math.round(ecmax)+' °C).','ইঞ্জিনের তাপমাত্রা স্বাভাবিক ('+Math.round(ecmax)+' °C)।');
+  if(ec&&smp.length>150&&ecmax<70)add('warn','Engine stayed cold during the drive. Thermostat may be stuck open.','ড্রাইভে ইঞ্জিন ঠান্ডা ছিল। থার্মোস্ট্যাট খোলা আটকে থাকতে পারে।',5);
+  if(!hyb){const idle=sampleStats(smp,'rpm',s=>s.spd===0&&s.rpm>400);
+    if(idle&&idle.n>15){if(idle.sd>80)add('warn','Idle is unsteady (±'+Math.round(idle.sd)+' rpm).','আইডল অস্থির (±'+Math.round(idle.sd)+' আরপিএম)।',6);
+      else add('good','Idle steady at '+Math.round(idle.avg)+' rpm.','আইডল স্থির, '+Math.round(idle.avg)+' আরপিএম।');}}
+  let flares=0;for(let i=1;i<smp.length;i++){const p=smp[i-1],r=smp[i];if(p.spd>15&&r.rpm-p.rpm>600&&r.spd-p.spd<=1)flares++}
+  if(smp.filter(s=>s.spd>15).length>20){if(flares>=2)add('warn','RPM jumped without speed rising '+flares+' times. Possible gearbox slip.','গতি না বেড়ে আরপিএম '+flares+' বার লাফিয়েছে। গিয়ারবক্স স্লিপ হতে পারে।',10);
+    else add('good','RPM and speed stayed in sync while driving.','ড্রাইভে আরপিএম ও গতি একসাথে ছিল।');}
+  const gp=smp.filter(s=>s.gps>20&&s.spd>0);
+  if(gp.length>=10){const ratio=gp.reduce((a,s)=>a+s.spd/s.gps,0)/gp.length,pct=(ratio-1)*100;
+    if(Math.abs(pct)>5)add('warn','Speed reading is '+Math.abs(pct).toFixed(0)+'% '+(pct>0?'higher':'lower')+' than GPS. Tyre size or gauge may be changed.','গতির রিডিং জিপিএসের চেয়ে '+Math.abs(pct).toFixed(0)+'% '+(pct>0?'বেশি':'কম')+'। টায়ারের সাইজ বা মিটার বদলানো হতে পারে।',4);
+    else add('good','Speed reading matches GPS (within '+Math.abs(pct).toFixed(0)+'%).','গতির রিডিং জিপিএসের সাথে মিলেছে ('+Math.abs(pct).toFixed(0)+'% এর মধ্যে)।');}
+  if(sc.cyl&&sc.cyl!=='none'){const v=Object.values(sc.cyl),mx=Math.max(...v),worst=Object.keys(sc.cyl).find(k=>sc.cyl[k]===mx);const rest=v.filter(x=>x!==mx);const avgRest=rest.length?rest.reduce((a,b)=>a+b,0)/rest.length:0;
+    if(mx>=20)add('bad','Cylinder '+worst+' is misfiring ('+mx+' counts). Check plug, coil and injector.','সিলিন্ডার '+worst+' মিসফায়ার করছে ('+mx+' বার)। প্লাগ, কয়েল ও ইনজেক্টর দেখুন।',15);
+    else if(mx>=5&&mx>avgRest*3)add('warn','Cylinder '+worst+' misfires more than the others ('+mx+'). Check plug, coil and injector.','সিলিন্ডার '+worst+' অন্যগুলোর চেয়ে বেশি মিসফায়ার করছে ('+mx+')। প্লাগ, কয়েল ও ইনজেক্টর দেখুন।',8);
+    else add('good','All cylinders burning evenly.','সব সিলিন্ডার সমানভাবে জ্বলছে।');}
+  if(sc.ac&&sc.ac.on&&sc.ac.off.rpm!=null){const a=sc.ac,dl=(a.on.load||0)-(a.off.load||0),dr=(a.on.rpm||0)-(a.off.rpm||0);
+    if(a.off.rpm>1200||(a.off.sd||0)>250)add('info','AC test: the engine was not idling. Park the car and run the test again.','এসি টেস্ট: ইঞ্জিন আইডলে ছিল না। গাড়ি দাঁড় করিয়ে আবার টেস্ট চালান।');
+    else if(dr<-100)add('warn','Idle drops '+Math.round(-dr)+' rpm with AC on. Throttle body or idle control may need cleaning.','এসি চালু করলে আইডল '+Math.round(-dr)+' আরপিএম কমে যায়। থ্রটল বডি বা আইডল কন্ট্রোল পরিষ্কার লাগতে পারে।',5);
+    else if(a.on.sd>100)add('warn','Idle becomes unsteady with AC on.','এসি চালু করলে আইডল অস্থির হয়।',5);
+    else if(dl<2&&!hyb)add('warn','Engine load barely changes with AC on. The AC compressor may not be engaging.','এসি চালু করলেও ইঞ্জিন লোড প্রায় বদলায় না। এসি কম্প্রেসর কাজ নাও করতে পারে।',5);
+    else if(dl>30)add('warn','AC puts a very heavy load on the engine (+'+Math.round(dl)+'%). Check the compressor.','এসি ইঞ্জিনে অনেক বেশি লোড দিচ্ছে (+'+Math.round(dl)+'%)। কম্প্রেসর দেখুন।',5);
+    else add('good','AC load test normal: load +'+Math.round(dl)+'%, idle steady.','এসি লোড টেস্ট স্বাভাবিক: লোড +'+Math.round(dl)+'%, আইডল স্থির।');}
+  if(sc.adapterVolt!=null&&sc.adapterVolt<12.2&&!(vv>13))add('warn','12V battery looks weak ('+sc.adapterVolt+' V).','১২ ভোল্ট ব্যাটারি দুর্বল মনে হচ্ছে ('+sc.adapterVolt+' V)।',4);
+  return{findings:F,score:Math.max(0,sc100),capRisky};}
+
+/* ---------- scoring ---------- */
+const RVAL={ok:1,minor:.6,major:0};
+function compute(){
+  const hyb=isHyb();const secs=[];const fails=[];let repairs=0,rated=0,total=0;const issues=[];
+  for(const sec of SECTIONS){if(!secOn(sec))continue;let sum=0,n=0;
+    for(const it of sec.items){if(!itemOn(it))continue;total++;const c=S.checks[it[0]];
+      if(c&&c.r&&c.r!=='ok'&&c.r!=='na'&&c.cost)repairs+=+c.cost||0;
+      if(!c||!c.r)continue;rated++;if(c.r==='na')continue;sum+=sec.two?(c.r==='ok'?1:.8):RVAL[c.r];n++;
+      if(c.r!=='ok')issues.push({sec:sec.k,label:bi(it[2],it[3]),r:c.r,cost:+c.cost||0,note:c.note||''});
+      if(c.r==='major'&&it[1])fails.push(bi(it[2],it[3]));}
+    if(n)secs.push({k:sec.k,w:sec.w,s:sum/n*100});}
+  const an=analyzeScan(S.scan,hyb);if(an.score!=null)secs.push({k:'scan',w:15,s:an.score});
+  if(hyb&&S.hybrid.health!==''&&!isNaN(+S.hybrid.health)){const h=Math.max(0,Math.min(100,+S.hybrid.health));secs.push({k:'hybrid',w:12,s:h});
+    if(h<60)fails.push(bi('Hybrid battery very weak ('+h+'%)','হাইব্রিড ব্যাটারি খুব দুর্বল ('+fmt(h)+'%)'));}
+  const W=secs.reduce((a,b)=>a+b.w,0);const score=W?secs.reduce((a,b)=>a+b.s*b.w,0)/W:null;
+  const progress=total?rated/total:0;
+  let v=null;if(score!=null){v=fails.length?'reject':score>=85?'excellent':score>=70?'good':score>=55?'risky':'skip';
+    if(an.capRisky&&(v==='excellent'||v==='good'))v='risky';}
+  if(v&&v!=='reject'&&progress<.6)v='incomplete';
+  const c=S.car,market=+c.market||0,asking=+c.asking||0;let price=null;
+  if(market){const fees=(+c.papersCost||0)+(+c.adsCost||0),profit=+c.profit||0;
+    const maxBuy=market-repairs-fees-profit;const adj=score!=null?Math.max(0,85-score)*0.004:0;const fair=market*(1-adj)-repairs;
+    price={market,repairs,fees,profit,maxBuy,fair,asking,gap:asking?asking-maxBuy:null};}
+  return{score,verdict:v,secs,fails,repairs,issues,price,progress,scan:an};}
+const vClass=v=>({excellent:'good',good:'good',risky:'warn',skip:'bad',reject:'bad',incomplete:'info'}[v]||'info');
+const sColor=s=>s>=85?'var(--good)':s>=70?'var(--accent)':s>=55?'var(--warn)':'var(--bad)';
+
+/* ---------- rendering ---------- */
+const ICON={
+ car:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16l1.6-5c.3-.9 1.1-1.5 2-1.5h6.8c.9 0 1.7.6 2 1.5L19 16v3h-2v-1.5H7V19H5z"/><circle cx="8.5" cy="15" r=".8"/><circle cx="15.5" cy="15" r=".8"/></svg>',
+ scan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="10" rx="2"/><path d="M8 11h.01M12 11h.01M16 11h.01M9 14h6"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.2 1.2L6.8 5M3.5 12l1.2 1.2 2.1-2.2M3.5 18l1.2 1.2 2.1-2.2"/></svg>',
+ report:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>',
+ saved:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg>'};
+const chev='<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+function renderTabs(){document.getElementById('tabs').innerHTML=['car','scan','check','report','saved'].map(k=>
+  `<button data-act="tab" data-v="${k}" ${tab===k?'aria-current="page"':''}>${ICON[k]}<span>${t(k)}</span></button>`).join('');}
+function carName(){const m=MODEL_MAP[S.car.model];return[S.car.year,m?m.name:'',S.car.fuel&&S.car.fuel!=='petrol'&&S.car.fuel!=='hybrid'?'('+t(S.car.fuel)+')':''].filter(Boolean).join(' ');}
+function render(){document.documentElement.lang=L==='bn'?'bn':'en';document.body.classList.toggle('bn',L==='bn');
+  document.getElementById('langEn').setAttribute('aria-pressed',L==='en');document.getElementById('langBn').setAttribute('aria-pressed',L==='bn');
+  document.getElementById('carSub').textContent=carName()||t('reportTitle');
+  renderTabs();const m=document.getElementById('main');
+  m.innerHTML=(S.sample&&tab!=='saved'?`<div class="banner no-print"><span>${t('sample')}</span><button class="btn primary" data-act="new">${t('newInsp')}</button></div>`:'')+
+    ({car:vCar,scan:vScan,check:vCheck,report:vReport,saved:vSaved}[tab])();
+  const lb=document.getElementById('logBox');if(lb){lb.textContent=logLines.join('\n');lb.scrollTop=lb.scrollHeight}
+  renderProg();}
+function renderProg(){const R=compute();const pct=Math.round(R.progress*100);
+  document.getElementById('prog').innerHTML=`<span><b>${fmt(pct)}%</b> ${t('progLbl')}</span><span class="track"><span class="fillp" style="width:${pct}%"></span></span><span>${t('scoreLbl')} <b>${R.score==null?'—':fmt(R.score)}</b></span>`;}
+const chead=(icon,title,tag)=>`<div class="chead"><span class="ic">${svg(icon)}</span><${tag||'h2'}>${title}</${tag||'h2'}></div>`;
+const inp=(path,type,val,extra)=>`<input id="f_${path.replace(/\./g,'_')}" type="${type}" data-bind="${path}" value="${esc(val)}" ${extra||''}>`;
+const fld=(lbl,html)=>`<label class="f">${lbl}${html}</label>`;
+
+function vCar(){const c=S.car,m=MODEL_MAP[c.model];
+  const opts=`<option value="">${t('selectModel')}</option>`+MODELS.map(g=>`<optgroup label="${g.g}">${g.list.map(x=>`<option value="${x[0]}" ${c.model===x[0]?'selected':''}>${x[1]}</option>`).join('')}</optgroup>`).join('');
+  const seg=['owner','unsure','broker'].map(v=>`<button class="choice" data-act="seller" data-v="${v}" aria-pressed="${c.sellerType===v}">${t(v)}</button>`).join('');
+  const fuel=FUELS.map(f=>`<button class="choice" data-act="fuel" data-v="${f}" aria-pressed="${c.fuel===f}">${svg(f)}<span>${t(f)}</span></button>`).join('');
+  const sw=COLORS.map(k=>`<button class="sw" data-act="color" data-v="${k[0]}" aria-pressed="${c.color===k[0]}"><i style="background:${k[3]}"></i>${bi(k[1],k[2])}</button>`).join('');
+  return `<section class="card ${c.fuel?'':'need'}">${chead('petrol',t('fuelH'))}<p class="hint">${t('fuelHint')}</p><div class="choices">${fuel}</div></section>
+  <section class="card">${chead('car',t('carH'))}
+    <div class="grid2">${fld(t('model'),`<select id="f_car_model" data-bind="car.model">${opts}</select>`)}${fld(t('year'),inp('car.year','number',c.year,'inputmode="numeric"'))}</div>
+    <div class="grid2">${fld(t('km'),inp('car.km','number',c.km,'inputmode="numeric"'))}${fld(t('location'),inp('car.location','text',c.location))}</div>
+    <div class="grid2">${fld(t('chassis'),inp('car.chassis','text',c.chassis))}${fld(t('regNo'),inp('car.regNo','text',c.regNo))}</div>
+    <div style="display:grid;gap:8px"><span class="eyebrow">${t('color')}</span><div class="swatches">${sw}</div>
+      ${c.color==='other'?inp('car.colorOther','text',c.colorOther,'placeholder="'+t('otherColor')+'" aria-label="'+t('otherColor')+'"'):''}</div></section>
+  ${m&&TIPS[m.tip]?`<section class="card">${chead('engine',t('watch')+': '+esc(m.name),'h3')}<ul class="tips">${TIPS[m.tip].map(x=>`<li>${esc(bi(x[0],x[1]))}</li>`).join('')}</ul></section>`:''}
+  <section class="card">${chead('seller',t('sellerH'))}
+    <div class="grid2">${fld(t('seller'),inp('car.seller','text',c.seller))}${fld(t('phone'),inp('car.phone','tel',c.phone))}</div>
+    ${fld(t('link'),inp('car.link','url',c.link))}
+    <div style="display:grid;gap:8px"><span class="eyebrow">${t('sellerType')}</span><div class="choices">${seg}</div></div></section>
+  <section class="card">${chead('price',t('priceH'))}
+    <div class="grid2">${fld(t('asking'),inp('car.asking','number',c.asking,'inputmode="numeric"'))}${fld(t('market'),inp('car.market','number',c.market,'inputmode="numeric"'))}</div>
+    <p class="hint">${t('marketHint')}</p>
+    <div class="grid2">${fld(t('profit'),inp('car.profit','number',c.profit,'inputmode="numeric"'))}${fld(t('papersCost'),inp('car.papersCost','number',c.papersCost,'inputmode="numeric"'))}</div>
+    <div class="grid2">${fld(t('adsCost'),inp('car.adsCost','number',c.adsCost,'inputmode="numeric"'))}${fld(t('inspector'),inp('car.inspector','text',c.inspector))}</div></section>`;}
+
+function vScan(){const sc=S.scan,hyb=isHyb(),btOk=!!navigator.bluetooth;
+  const conn=link?`<div class="status"><span class="led on"></span><b>${link.demo?t('demoMode'):t('connectedTo')+' '+esc(linkName)}</b></div>`:`<div class="status"><span class="led"></span><span class="muted">${t('notConnected')}</span></div>`;
+  let h=`<section class="card"><h2>${t('scan')}</h2>${conn}<p class="hint">${t('scanHint')}</p>
+    ${!btOk&&!link?`<div class="callout warn small">${t('noBt')}</div>`:''}
+    <div class="row">${link?`<button class="btn primary" data-act="full" ${busy||recording?'disabled':''}>${busy?t('scanning'):t('fullScan')}</button><button class="btn" data-act="disc">${t('disconnect')}</button>`
+      :`<button class="btn primary" data-act="conn" ${btOk?'':'disabled'}>${t('connect')}</button><button class="btn" data-act="demo">${t('demo')}</button>`}</div></section>`;
+  if(sc&&sc.mon!==undefined){const an=analyzeScan(sc,hyb),m=sc.mon,dl=arr=>arr&&arr.length?`<div class="codes">${arr.map(c=>`<div class="code"><span class="c">${c}</span><span>${esc(dtcText(c))}</span></div>`).join('')}</div>`:`<span class="pill good">${t('none')}</span>`;
+    h+=`<section class="card"><div class="rephead"><h2>${t('findings')}</h2><span class="small muted">${t('lastScan')}: ${new Date(sc.at).toLocaleString(L==='bn'?'bn-BD':'en-GB')}</span></div>
+      <div>${an.findings.map(f=>`<div class="find"><span class="sev ${f.sev}"></span><span>${esc(bi(f.en,f.bn))}</span></div>`).join('')}</div></section>
+    <section class="card"><dl class="kv">
+      <dt>${t('mil')}</dt><dd>${m?`<span class="pill ${m.mil?'bad':'good'}">${m.mil?t('on'):t('off')}</span>`:'—'}</dd>
+      <dt>${t('distCleared')}</dt><dd class="num">${sc.distCleared!=null?fmt(sc.distCleared)+' '+t('km_u'):'—'}</dd>
+      <dt>${t('timeCleared')}</dt><dd class="num">${sc.timeCleared!=null?fmt(sc.timeCleared)+' '+t('min_u'):'—'}</dd>
+      <dt>${t('warmups')}</dt><dd class="num">${sc.warmups!=null?fmt(sc.warmups):'—'}</dd>
+      <dt>${t('distMil')}</dt><dd class="num">${sc.distMil!=null?fmt(sc.distMil)+' '+t('km_u'):'—'}</dd>
+      <dt>${t('odoEcu')}</dt><dd class="num">${sc.odo!=null?fmt(sc.odo)+' '+t('km_u'):`<span class="muted" style="font-weight:500">${t('odoNone')}</span>`}</dd>
+      <dt>${t('vin')}</dt><dd class="mono small">${sc.vin?esc(sc.vin):`<span class="muted" style="font-family:var(--font-body)">${t('vinNone')}</span>`}</dd></dl></section>
+    <section class="card"><h3>${t('stored')}</h3>${dl(sc.stored)}<h3>${t('pending')}</h3>${dl(sc.pending)}<h3>${t('permanent')}</h3>${dl(sc.permanent)}</section>
+    ${m&&m.list.length?`<section class="card"><h3>${t('monitors')} · ${fmt(m.list.length-m.incomplete)}/${fmt(m.list.length)} ${t('complete')}</h3><div class="row">${m.list.map(x=>`<span class="pill ${x.ok?'good':'warn'}">${x.n}</span>`).join('')}</div></section>`:''}`;}
+  else h+=`<section class="card"><p class="muted">${t('noScan')}</p></section>`;
+  h+=`<section class="card"><div class="rephead"><h2>${t('live')}</h2><span class="small muted" id="sampleCount">${fmt((sc&&sc.samples||[]).length)} ${t('samples')}</span></div>
+    <div class="tiles" id="liveTiles">${liveTiles()}</div>
+    ${link?`<label class="check"><input type="checkbox" id="gpsToggle" data-act="gps" ${useGps?'checked':''} ${recording?'disabled':''}>${t('useGps')}</label>
+      <button class="btn ${recording?'danger':'primary'} block" data-act="rec" ${busy?'disabled':''}>${recording?t('stopRec'):t('startRec')}</button>`:''}</section>`;
+  h+=`<section class="card"><h3>${t('sensorsH')}</h3><p class="hint">${t('sensorsHint')}</p><div style="overflow-x:auto"><table class="sens" id="sensTable">${sensRows()}</table></div></section>`;
+  const cyl=sc&&sc.cyl;
+  h+=`<section class="card"><h3>${t('cylH')}</h3><p class="hint">${t('cylHint')}</p>
+    ${cyl==='none'?`<p class="muted">${t('cylNone')}</p>`:cyl?`<div class="cyl">${Object.keys(cyl).map(k=>{const v=cyl[k],cl=v>=20?'bad':v>=5?'warn':'good';return`<div class="tile"><span class="v" style="color:var(--${cl})">${fmt(v)}</span><span class="k">${t('cyl')} ${fmt(+k)}</span></div>`}).join('')}</div>`:''}
+    ${link?`<button class="btn" data-act="cyl" ${busy||recording?'disabled':''}>${t('cylRun')}</button>`:''}</section>`;
+  const ac=sc&&sc.ac;
+  h+=`<section class="card"><h3>${t('acH')}</h3><p class="hint">${t('acHint')}</p>
+    ${ac&&ac.off&&ac.on?`<table class="sens"><tr><td></td><td>${t('acOff')}</td><td>${t('acOn')}</td></tr>
+      <tr><td>${t('rpm')}</td><td>${fmt(ac.off.rpm)}</td><td>${fmt(ac.on.rpm)}</td></tr><tr><td>${t('load')}</td><td>${fmt(ac.off.load)}</td><td>${fmt(ac.on.load)}</td></tr>
+      <tr><td>${t('maf')}</td><td>${ac.off.maf!=null?ac.off.maf.toFixed(1):'—'}</td><td>${ac.on.maf!=null?ac.on.maf.toFixed(1):'—'}</td></tr></table>`:''}
+    ${link?(acStage==='waitOn'?`<div class="step">${t('acWaitOn')}</div><button class="btn primary" data-act="ac" ${busy?'disabled':''}>${t('acNext')}</button>`
+      :acStage==='runOff'||acStage==='runOn'?`<div class="step">${t('acRun')}</div>`
+      :`<div class="step">${t('acWaitOff')}</div><button class="btn" data-act="ac" ${busy||recording?'disabled':''}>${acStage==='done'?t('acAgain'):t('acStart')}</button>`):''}</section>`;
+  if(hyb)h+=`<section class="card"><h2>${t('hybridH')}</h2><p class="hint">${t('hybridHint')}</p>
+    <div class="grid2">${fld(t('health'),inp('hybrid.health','number',S.hybrid.health,'inputmode="numeric" min="0" max="100"'))}${fld(t('weak'),inp('hybrid.weak','number',S.hybrid.weak,'inputmode="numeric"'))}</div></section>`;
+  h+=`<section class="card"><h3>${t('v2H')}</h3><p class="hint">${t('v2')}</p></section>
+    <section class="card"><div class="rephead"><h3>${t('log')}</h3><button class="btn" data-act="copylog">${t('copyLog')}</button></div><pre class="log" id="logBox"></pre></section>`;
+  return h;}
+function liveSrc(){return Object.keys(liveNow).length?liveNow:((S.scan&&S.scan.snap)||{});}
+function liveTiles(){const src=liveSrc();
+  const d={rpm:0,spd:0,ect:0,load:0,maf:1,stft:1,ltft:1,volt:2,ratio:0,gps:0};
+  const vals=Object.assign({},src,{ratio:src.spd>5&&src.rpm?src.rpm/src.spd:null});
+  return Object.keys(d).filter(k=>k!=='gps'||useGps||vals.gps!=null).map(k=>`<div class="tile"><span class="v">${vals[k]!=null?(+vals[k]).toFixed(d[k]):'—'}</span><span class="k">${t(k)}</span></div>`).join('');}
+function sensRows(){const src=liveSrc();const rows=Object.keys(PID_DEFS).filter(p=>p!=='A6'&&src[PID_DEFS[p][0]]!=null);
+  if(!rows.length)return`<tr><td class="muted">${t('noScan')}</td><td></td></tr>`;
+  return rows.map(p=>{const d=PID_DEFS[p];return`<tr><td>${bi(d[1],d[2])}</td><td>${(+src[d[0]]).toFixed(d[5])} ${d[3]}</td></tr>`}).join('');}
+function updateLive(){const el=document.getElementById('liveTiles');if(el)el.innerHTML=liveTiles();
+  const st=document.getElementById('sensTable');if(st)st.innerHTML=sensRows();
+  const c=document.getElementById('sampleCount');if(c)c.textContent=fmt((S.scan&&S.scan.samples||[]).length)+' '+t('samples');}
+
+/* which sections are open is kept in memory (and saved when the browser allows), so tapping a rating never closes a section */
+let openSecs=store.get('cc.open',{papers:true});
+function itemHtml(sec,it){const c=S.checks[it[0]]||{};
+  const opts=sec.two?[['ok','ok'],['minor','fix']]:[['ok','ok'],['minor','minor'],['major','major'],['na','na']];
+  return `<div class="item ${sec.two?'two':''}" data-item="${it[0]}"><div class="lbl">${esc(bi(it[2],it[3]))}${it[1]?`<span class="crit">${t('mustPass')}</span>`:''}</div>
+    <div class="rate">${opts.map(o=>`<button type="button" class="${o[0]}" data-act="rate" data-id="${it[0]}" data-v="${o[0]}" aria-pressed="${c.r===o[0]}">${rsvg(o[0])}${t(o[1])}</button>`).join('')}</div>
+    ${c.r==='minor'||c.r==='major'?`<div class="extra">${inp('checks.'+it[0]+'.cost','number',c.cost||'','inputmode="numeric" placeholder="'+t('cost')+'" aria-label="'+t('cost')+'"')}${inp('checks.'+it[0]+'.note','text',c.note||'','placeholder="'+t('note')+'" aria-label="'+t('note')+'"')}</div>`:''}</div>`;}
+function secStatus(sec){const items=sec.items.filter(itemOn);const n=items.filter(it=>S.checks[it[0]]&&S.checks[it[0]].r).length;
+  const bad=items.some(it=>S.checks[it[0]]&&S.checks[it[0]].r==='major'),warn=items.some(it=>S.checks[it[0]]&&S.checks[it[0]].r==='minor');
+  return{n,total:items.length,cls:n===items.length?(bad?'bad':warn?'warn':'good'):'info'};}
+function secHead(sec){const s=secStatus(sec);
+  return `<span class="ic">${svg(sec.k)}</span><span class="st"><h2>${t('sec_'+sec.k)}</h2><span class="mini"><span style="width:${s.total?s.n/s.total*100:0}%;background:var(--${s.cls==='info'?'accent':s.cls})"></span></span></span>
+    <span class="row" style="gap:8px;flex-wrap:nowrap"><span class="pill ${s.cls}">${fmt(s.n)}/${fmt(s.total)}</span>${chev}</span>`;}
+function vCheck(){
+  return SECTIONS.filter(secOn).map(sec=>`<details class="sec" data-sec="${sec.k}" ${openSecs[sec.k]?'open':''}><summary>${secHead(sec)}</summary>
+      ${sec.two?`<p class="sechint">${t('panelHint')}</p>`:''}
+      <div class="items">${sec.items.filter(itemOn).map(it=>itemHtml(sec,it)).join('')}</div></details>`).join('');}
+function updateItem(id){const sec=SECTIONS.find(s=>s.items.some(i=>i[0]===id));const it=sec.items.find(i=>i[0]===id);
+  const el=document.querySelector(`[data-item="${id}"]`);if(el)el.outerHTML=itemHtml(sec,it);
+  const sm=document.querySelector(`details[data-sec="${sec.k}"]>summary`);if(sm)sm.innerHTML=secHead(sec);
+  renderProg();}
+
+function gauge(score,verdict){const s=score==null?0:score,r=46,C=2*Math.PI*r,len=C*.75,
+  col=score==null?'var(--line)':verdict&&verdict!=='incomplete'?{good:'var(--good)',warn:'var(--warn)',bad:'var(--bad)'}[vClass(verdict)]:sColor(s);
+  return `<svg class="gauge" viewBox="0 0 110 110" role="img" aria-label="${t('score')} ${score==null?'—':Math.round(s)}">
+   <circle cx="55" cy="55" r="${r}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="9" stroke-dasharray="${len} ${C}" transform="rotate(135 55 55)" stroke-linecap="round"/>
+   <circle cx="55" cy="55" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-dasharray="${len*s/100} ${C}" transform="rotate(135 55 55)" stroke-linecap="round"/>
+   <text x="55" y="61" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="30" font-weight="700" fill="currentColor">${score==null?'—':fmt(s)}</text>
+   <text x="55" y="80" text-anchor="middle" font-size="10" fill="currentColor" opacity=".6">/ ${fmt(100)}</text></svg>`;}
+function vReport(){const R=compute(),c=S.car,p=R.price;
+  let h=`<section class="card herocard"><div class="rephead"><div><span class="eyebrow" style="color:var(--gold)">Car Check</span><h2>${t('reportTitle')}</h2><div class="small muted">${esc(c.inspector||'')}${c.inspector?' · ':''}${t('date')}: ${new Date().toLocaleDateString(L==='bn'?'bn-BD':'en-GB')}</div></div>
+    <div class="row no-print"><button class="btn" data-act="print">${t('print')}</button><button class="btn primary" data-act="save">${t('save')}</button></div></div>
+    <div class="hero">${gauge(R.score,R.verdict)}<div style="display:grid;gap:6px;min-width:0"><div class="verdict">${esc(carName()||'—')}</div>
+      ${R.verdict?`<span class="pill ${vClass(R.verdict)}" style="justify-self:start">${t(R.verdict)}</span>`:''}
+      <span class="small muted">${[c.fuel?t(c.fuel):'',c.km?fmt(c.km)+' '+t('km_u'):'',c.chassis,c.regNo,colorName(c)].filter(Boolean).map(esc).join(' · ')}</span>
+      <span class="small muted">${fmt(Math.round(R.progress*100))}% ${t('checked')}</span></div></div></section>`;
+  if(R.fails.length)h+=`<section class="card"><h3 style="color:var(--bad)">${t('hardFails')}</h3>${R.fails.map(f=>`<div class="find"><span class="sev bad"></span><span>${esc(f)}</span></div>`).join('')}</section>`;
+  h+=`<section class="card"><h3>${t('priceH')}</h3>`;
+  if(p){h+=`<div class="price"><div class="ln"><span>${t('marketShort')}</span><span>${tk(p.market)}</span></div>
+      <div class="ln"><span>− ${t('repairs')}</span><span>${tk(p.repairs)}</span></div><div class="ln"><span>− ${t('feeLine')}</span><span>${tk(p.fees)}</span></div>
+      <div class="ln"><span>− ${t('profitLine')}</span><span>${tk(p.profit)}</span></div><div class="ln total"><span>${t('maxBuy')}</span><span>${tk(p.maxBuy)}</span></div>
+      <div class="ln"><span>${t('fair')}</span><span>${tk(p.fair)}</span></div>${p.asking?`<div class="ln"><span>${t('askingP')}</span><span>${tk(p.asking)}</span></div>`:''}</div>`;
+    if(p.asking)h+=p.gap<=0?`<div class="callout good">${t('goodDeal')}</div>`:`<div class="callout ${p.gap>p.market*.05?'bad':'warn'}">${t('overBy')} ${tk(p.gap)} · ${t('offer')} ${tk(p.maxBuy)}</div>`;}
+  else h+=`<p class="muted">${t('needMarket')}</p>`;
+  h+=`</section>`;
+  if(R.secs.length)h+=`<section class="card"><h3>${t('sections')}</h3><div class="bars">${R.secs.map(s=>`<div class="bar"><span>${t('sec_'+s.k)}</span><span class="track"><span class="fill" style="width:${s.s}%;background:${sColor(s.s)}"></span></span><span class="num" style="text-align:right">${fmt(s.s)}</span></div>`).join('')}</div></section>`;
+  if(R.scan.findings.length)h+=`<section class="card"><h3>${t('findings')}</h3>${R.scan.findings.map(f=>`<div class="find"><span class="sev ${f.sev}"></span><span>${esc(bi(f.en,f.bn))}</span></div>`).join('')}</section>`;
+  const issues=R.issues.filter(i=>i.r!=='na');
+  h+=`<section class="card"><h3>${t('issues')}</h3>${issues.length?issues.map(i=>`<div class="issue"><div style="min-width:0"><span class="pill ${i.r==='major'?'bad':'warn'}">${i.sec==='panels'?t('fix'):t(i.r)}</span> ${esc(i.label)}${i.note?`<div class="small muted">${esc(i.note)}</div>`:''}</div><span class="num" style="white-space:nowrap">${i.cost?tk(i.cost):''}</span></div>`).join(''):`<p class="muted">${t('noIssues')}</p>`}
+    ${R.repairs?`<div class="issue"><b>${t('repairs')}</b><b class="num">${tk(R.repairs)}</b></div>`:''}</section>`;
+  if(isHyb()&&S.hybrid.health!=='')h+=`<section class="card"><h3>${t('hybridH')}</h3><dl class="kv"><dt>${t('health')}</dt><dd>${fmt(S.hybrid.health)}%</dd><dt>${t('weak')}</dt><dd>${S.hybrid.weak!==''?fmt(S.hybrid.weak):'—'}</dd></dl></section>`;
+  h+=`<section class="card"><h3>${t('notes')}</h3><textarea id="f_notes" data-bind="notes">${esc(S.notes)}</textarea><p class="hint">${t('disclaimer')}</p></section>`;
+  return h;}
+
+function vSaved(){const list=store.get('cc.list',[]);
+  let h=`<section class="card"><div class="rephead"><h2>${t('savedH')}</h2><button class="btn primary" data-act="new">${t('newInsp')}</button></div><p class="hint">${t('storageNote')}</p>
+    <div class="row"><button class="btn" data-act="export">${t('exportB')}</button><button class="btn" data-act="import">${t('importB')}</button></div></section>`;
+  if(!list.length)return h+`<section class="card"><p class="muted">${t('emptySaved')}</p></section>`;
+  return h+list.slice().sort((a,b)=>(b.savedAt||'').localeCompare(a.savedAt||'')).map(it=>{const m=MODEL_MAP[it.car.model];
+    return `<section class="card saved"><div style="min-width:0"><b>${esc([it.car.year,m?m.name:''].filter(Boolean).join(' ')||'—')}</b>
+      <div class="small muted">${esc(it.car.location||'')} · ${new Date(it.savedAt||it.created).toLocaleDateString(L==='bn'?'bn-BD':'en-GB')} · ${it.car.asking?tk(it.car.asking):''}</div>
+      ${it.verdict?`<span class="pill ${vClass(it.verdict)}">${it.score!=null?fmt(it.score)+' · ':''}${t(it.verdict)}</span>`:''}</div>
+      <div class="row" id="act_${it.id}">${it.id===S.id?`<span class="pill info">${t('current')}</span>`:`<button class="btn" data-act="openSaved" data-id="${it.id}">${t('open')}</button>`}<button class="btn danger" data-act="askDel" data-id="${it.id}">${t('del')}</button></div></section>`}).join('');}
+
+/* ---------- events ---------- */
+function setPath(path,val){const ks=path.split('.');let o=S;for(let i=0;i<ks.length-1;i++){if(o[ks[i]]==null)o[ks[i]]={};o=o[ks[i]]}o[ks[ks.length-1]]=val;}
+let saveT;
+document.addEventListener('input',e=>{const el=e.target,p=el.dataset&&el.dataset.bind;if(!p)return;
+  let v=el.type==='checkbox'?el.checked:el.value;if(el.type==='number'&&v!=='')v=+v;setPath(p,v);
+  if(p==='car.model'){const m=MODEL_MAP[v];if(m&&m.hybrid)S.car.fuel='hybrid';else if(m&&S.car.fuel==='hybrid')S.car.fuel='petrol';render()}
+  else if(p!=='notes')renderProg();
+  clearTimeout(saveT);saveT=setTimeout(save,300);});
+document.addEventListener('toggle',e=>{const d=e.target;if(d.matches&&d.matches('details.sec')){openSecs[d.dataset.sec]=d.open;store.set('cc.open',openSecs)}},true);
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,v=b.dataset.v,id=b.dataset.id;
+  if(a==='tab'){tab=v;store.set('cc.tab',v);render();window.scrollTo(0,0);return}
+  if(a==='lang'){L=v;store.set('cc.lang',v);render();return}
+  if(a==='seller'){S.car.sellerType=v;save();render();return}
+  if(a==='fuel'){S.car.fuel=v;save();render();return}
+  if(a==='rate'){e.preventDefault();const c=S.checks[id]||{};c.r=c.r===v?'':v;S.checks[id]=c;save();updateItem(id);return}
+  if(a==='color'){S.car.color=v;save();render();return}
+  if(a==='new'){recording=false;stopGps();S=blank();save();tab='car';store.set('cc.tab','car');render();window.scrollTo(0,0);return}
+  if(a==='demo'){link=new DemoLink();await link.connect();linkName='Demo';logLines=[];sup=null;acStage='ready';await initAdapter();render();return}
+  if(a==='conn'){try{const l=new BleLink();await l.connect();link=l;linkName=l.name;sup=null;acStage='ready';l.onLost=()=>{link=null;recording=false;stopGps();toast(t('lost'));render()};logLines=[];render();await initAdapter();render()}
+    catch(err){log('CONNECT',err.message);if(err.name!=='NotFoundError')toast(t('btFail'))}return}
+  if(a==='disc'){recording=false;stopGps();if(link)link.disconnect();link=null;render();return}
+  if(a==='full'){runFullScan();return}
+  if(a==='gps'){useGps=b.checked;if(!useGps)stopGps();return}
+  if(a==='rec'){recording=!recording;if(recording&&useGps)startGps();if(!recording)stopGps();render();if(recording)liveLoop();return}
+  if(a==='cyl'){runCylTest();return}
+  if(a==='ac'){acStep();return}
+  if(a==='copylog'){const txt=logLines.join('\n');try{await navigator.clipboard.writeText(txt);toast(t('copied'))}catch(err){const r=document.createRange();r.selectNodeContents(document.getElementById('logBox'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r)}return}
+  if(a==='print'){window.print();return}
+  if(a==='save'){const R=compute();const list=store.get('cc.list',[]).filter(x=>x.id!==S.id);const copy=JSON.parse(JSON.stringify(S));copy.savedAt=new Date().toISOString();copy.score=R.score;copy.verdict=R.verdict;
+    if(copy.scan)copy.scan.samples=(copy.scan.samples||[]).slice(-300);list.push(copy);store.set('cc.list',list);save();toast(t('savedT'));return}
+  if(a==='openSaved'){const it=store.get('cc.list',[]).find(x=>x.id===id);if(it){S=migrate(JSON.parse(JSON.stringify(it)));save();tab='report';store.set('cc.tab','report');render();window.scrollTo(0,0)}return}
+  if(a==='askDel'){document.getElementById('act_'+id).innerHTML=`<span class="small">${t('confirmDel')}</span><button class="btn danger" data-act="del" data-id="${id}">${t('yes')}</button><button class="btn" data-act="tab" data-v="saved">${t('cancel')}</button>`;return}
+  if(a==='del'){store.set('cc.list',store.get('cc.list',[]).filter(x=>x.id!==id));render();return}
+  if(a==='export'){const blob=new Blob([JSON.stringify({app:'car-check',v:2,list:store.get('cc.list',[])},null,1)],{type:'application/json'});
+    const u=URL.createObjectURL(blob);const an=document.createElement('a');an.href=u;an.download='car-check-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(an);an.click();an.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);return}
+  if(a==='import'){document.getElementById('importFile').click();return}
+});
+document.getElementById('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;
+  try{const d=JSON.parse(await f.text());if(d.app!=='car-check'||!Array.isArray(d.list))throw 0;const list=store.get('cc.list',[]);const ids=new Set(list.map(x=>x.id));
+    d.list.forEach(x=>{if(!ids.has(x.id))list.push(migrate(x))});store.set('cc.list',list);toast(t('imported'));render()}catch(err){toast(t('importFail'))}e.target.value='';});
+let toastT;function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2200);}
+
+render();
+</script>
+</body>
+</html>
